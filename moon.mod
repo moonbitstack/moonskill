@@ -1,10 +1,10 @@
-name = "moonbitstack/moonskills"
+name = "moonbitstack/moonskill"
 
 version = "0.1.0"
 
 readme = "README.md"
 
-repository = "https://github.com/moonbitstack/moonskills"
+repository = "https://github.com/moonbitstack/moonskill"
 
 license = "Apache-2.0"
 
