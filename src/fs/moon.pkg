@@ -1,0 +1,24 @@
+// Copyright 2026 Leo Cheng
+// SPDX-License-Identifier: Apache-2.0
+
+// The filesystem half of the specification: a directory of skills, read as a
+// `Source`. Everything here is native-only — the other targets have no files —
+// which is why the files carry the `.native.mbt` suffix.
+//
+// Inside this package `@fs` is `moonbitlang/async/fs`, the filesystem itself;
+// this package is the skill tree on top of it.
+import {
+  "moonbitstack/moonskill",
+  "moonbitlang/async/fs" @aiofs,
+  "moonbitlang/async/io" @aio,
+  "moonbitlang/core/encoding/utf8",
+}
+
+import {
+  "moonbitlang/async",
+} for "test"
+
+// Every file in this package is native, so on js and wasm-gc it is empty and
+// each of its imports looks unused. The silence is for those two targets only.
+
+warnings = "-29"

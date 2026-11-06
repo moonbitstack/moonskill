@@ -9,5 +9,11 @@ import {
   "moonbitstack/moonyaml/strict",
   "moonbitstack/moonucd",
   "moonbitstack/moonucd/normalize",
+  "moonbitlang/core/encoding/utf8",
   "moonbitlang/core/debug",
 }
+
+import {
+  "moonbitlang/async",
+  "moonbitlang/core/encoding/utf8",
+} for "test"

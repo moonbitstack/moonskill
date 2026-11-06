@@ -9,11 +9,15 @@ import {
 // Values
 pub fn base_name(StringView) -> String
 
+pub async fn discover(&Source) -> Array[Skill]
+
 pub fn faults(StringView, root? : String, limits? : Limits) -> Array[Fault]
 
 pub fn join_path(StringView, StringView) -> String
 
 pub let limits : Limits
+
+pub async fn load(&Source, root~ : String) -> Skill
 
 pub fn parse(StringView, root? : String) -> Skill raise Refused
 
@@ -94,3 +98,7 @@ pub fn Skill::summary(Self) -> String
 // Type aliases
 
 // Traits
+pub(open) trait Source {
+  async fn list(Self) -> Array[String]
+  async fn read(Self, String) -> Bytes
+}
