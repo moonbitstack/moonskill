@@ -1,0 +1,27 @@
+// Copyright 2026 Leo Cheng
+// SPDX-License-Identifier: Apache-2.0
+
+// A command that answers one question about a skill directory: does it meet the
+// specification, and if not, in what ways.
+pkgtype(kind: "executable")
+
+import {
+  "moonbitstack/moonskill",
+  "moonbitstack/moonskill/fs",
+  "moonbitlang/async",
+  "moonbitlang/core/env",
+  "moonbitlang/core/json",
+}
+
+// The command reads a directory, so only the native target runs it; elsewhere
+// the package is a stub that says so. The imports of an empty package look
+// unused, which is the other half of the same fact.
+
+warnings = "-29"
+
+options(
+  targets: {
+    "main.mbt": [ "native" ],
+    "elsewhere.mbt": [ "wasm", "wasm-gc", "js" ],
+  },
+)
