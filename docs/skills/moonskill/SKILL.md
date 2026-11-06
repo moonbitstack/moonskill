@@ -33,7 +33,9 @@ be checked in one pass.
 
 ## Load every skill in a tree
 
-```mbt check
+`@fs` reads the disk, so it is there on the native target only.
+
+```mbt check native
 async test {
   let tree = @fs.Dir::at("docs/skills")
   let skills = @moonskill.discover(tree)

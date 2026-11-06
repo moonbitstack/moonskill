@@ -94,7 +94,9 @@ with the wording, for a report read by a program.
 
 ## Discover a tree
 
-```mbt check
+`@fs` reads the disk, so it is there on the native target only.
+
+```mbt check native
 async test {
   let tree = @fs.Dir::at("docs/skills")
   let skills = @moonskill.discover(tree)
@@ -127,7 +129,7 @@ test {
 | 2 | the body of the chosen skill | `Skill::body` |
 | 3 | a file the body refers to | `Skill::resolve` then `Source::read` |
 
-```mbt check
+```mbt check native
 async test {
   let tree = @fs.Dir::at("docs/skills")
   let skills = @moonskill.discover(tree)
