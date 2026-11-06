@@ -1,0 +1,48 @@
+name: Conformance
+
+# The reference validator from agentskills/agentskills judges the same corpus this
+# library does; a case where the two disagree fails the job. The commit is pinned
+# because the corpus is worded against the rules as they read today.
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+env:
+  SKILLS_REF_COMMIT: 83021e2be457a9b6679148719c1f6074f0ad975e
+
+jobs:
+  reference:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: install moonbit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: install the reference validator
+        run: |
+          python3 -m venv "$RUNNER_TEMP/skills-ref"
+          "$RUNNER_TEMP/skills-ref/bin/pip" install --quiet --disable-pip-version-check \
+            "git+https://github.com/agentskills/agentskills@${SKILLS_REF_COMMIT}#subdirectory=skills-ref"
+          echo "$RUNNER_TEMP/skills-ref/bin" >> "$GITHUB_PATH"
+
+      - name: the corpus matches its generator
+        run: python3 scripts/conformance/gen_corpus.py --check
+
+      - name: this library judges as the reference does
+        run: |
+          moon update
+          python3 scripts/conformance/check_reference_parity.py
+
+      - name: this library's own skill passes both
+        run: |
+          skills-ref validate docs/skills/moonskill
