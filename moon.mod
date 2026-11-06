@@ -12,11 +12,25 @@ keywords = [
   "agent-skills",
   "skills",
   "skill-md",
-  "agent",
   "agentskills",
+  "agent-skills-specification",
+  "skills-ref",
+  "frontmatter",
+  "yaml",
+  "markdown",
+  "progressive-disclosure",
+  "validation",
+  "discovery",
+  "agent",
   "moonbit",
 ]
 
 description = "Agent Skills for MoonBit: discover skill directories, read SKILL.md, validate it against the specification."
 
 source = "src"
+
+import {
+  "moonbitstack/moonyaml@0.1.4",
+  "moonbitstack/moonucd@0.1.3",
+  "moonbitlang/async@0.22.5",
+}

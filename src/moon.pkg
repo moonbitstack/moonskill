@@ -1,1 +1,13 @@
-// The Agent Skills specification. https://agentskills.io/specification
+// The Agent Skills specification: what a `SKILL.md` may say, how a client
+// judges it, and how it loads the three tiers the specification describes.
+// https://agentskills.io/specification
+//
+// Nothing here touches a file: text in, `Skill` out. The directory reader is
+// `moonskill/fs`, so a client that keeps skills in a database or a tarball
+// implements `Source` and reuses `discover`.
+import {
+  "moonbitstack/moonyaml/strict",
+  "moonbitstack/moonucd",
+  "moonbitstack/moonucd/normalize",
+  "moonbitlang/core/debug",
+}

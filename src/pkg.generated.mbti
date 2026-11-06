@@ -1,11 +1,95 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "moonbitstack/moonskill"
 
+import {
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
 // Values
+pub fn base_name(StringView) -> String
+
+pub fn faults(StringView, root? : String, limits? : Limits) -> Array[Fault]
+
+pub fn join_path(StringView, StringView) -> String
+
+pub let limits : Limits
+
+pub fn parse(StringView, root? : String) -> Skill raise Refused
+
+pub fn prompt(ArrayView[Skill]) -> String
+
+pub fn validate(Skill, limits? : Limits) -> Array[Fault]
 
 // Errors
+#derive(Eq, @debug.Debug)
+pub(all) suberror Refused {
+  MissingFrontmatter
+  UnclosedFrontmatter
+  BadYaml(String)
+  NotAMapping
+  NotUtf8(Int32)
+  NoDocument
+}
+pub fn Refused::equal(Self, Self) -> Bool
+pub fn Refused::message(Self) -> String
+pub fn Refused::not_equal(Self, Self) -> Bool
+pub fn Refused::output(Self, &Logger) -> Unit
+pub fn Refused::to_repr(Self) -> @debug.Repr
+pub fn Refused::to_string(Self) -> String
+pub impl Show for Refused
 
 // Types and methods
+#derive(Eq, @debug.Debug)
+pub(all) enum Fault {
+  UnexpectedFields(Array[String])
+  MissingName
+  NameEmpty
+  NameTooLong(String, Int32, Int32)
+  NameNotLowercase(String)
+  NameEdgeHyphen
+  NameDoubleHyphen
+  NameBadCharacter(String)
+  NameMismatch(String, String)
+  MissingDescription
+  DescriptionEmpty
+  DescriptionTooLong(Int32, Int32)
+  CompatibilityNotText
+  CompatibilityTooLong(Int32, Int32)
+  Malformed(Refused)
+  MissingPath(String)
+  NotADirectory(String)
+  MissingDocument
+}
+pub fn Fault::equal(Self, Self) -> Bool
+pub fn Fault::kind(Self) -> String
+pub fn Fault::message(Self) -> String
+pub fn Fault::not_equal(Self, Self) -> Bool
+pub fn Fault::output(Self, &Logger) -> Unit
+pub fn Fault::to_repr(Self) -> @debug.Repr
+pub fn Fault::to_string(Self) -> String
+pub impl Show for Fault
+
+pub(all) struct Limits {
+  name : Int32
+  description : Int32
+  compatibility : Int32
+}
+
+pub(all) struct Skill {
+  name : String
+  description : String
+  body : String
+  meta : Map[String, @json.Json]
+  root : String
+}
+pub fn Skill::allowed_tools(Self) -> String?
+pub fn Skill::compatibility(Self) -> String?
+pub fn Skill::license(Self) -> String?
+pub fn Skill::location(Self) -> String
+pub fn Skill::metadata(Self) -> Map[String, String]?
+pub fn Skill::resolve(Self, StringView) -> String?
+pub fn Skill::summary(Self) -> String
 
 // Type aliases
 
