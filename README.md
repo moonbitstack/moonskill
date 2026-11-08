@@ -10,6 +10,12 @@ the one line per skill it needs to choose.
 [![mooncakes](https://img.shields.io/badge/mooncakes-moonbitstack%2Fmoonskill-2f6fd0)](https://mooncakes.io/docs/moonbitstack/moonskill)
 [![license](https://img.shields.io/badge/license-Apache--2.0-2f6fd0)](LICENSE)
 
+[home](https://moonbitstack.github.io/moonskill/) &middot;
+[guide](https://moonbitstack.github.io/moonskill/guide.html) &middot;
+[api](https://moonbitstack.github.io/moonskill/api.html) &middot;
+[screening](https://moonbitstack.github.io/moonskill/screening.html) &middot;
+[mooncakes](https://mooncakes.io/docs/moonbitstack/moonskill)
+
 </div>
 
 ## Why

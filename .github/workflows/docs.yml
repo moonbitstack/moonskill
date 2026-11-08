@@ -1,0 +1,77 @@
+name: Docs
+
+# The documentation site. The pages, the API reference and the printed numbers are generated from
+# the source on every push, and the build fails when a page has drifted from what the source says.
+# The library is compiled to JavaScript here rather than committed: `docs/engine/` is not in the
+# repository.
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: install moonbit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: resolve dependencies
+        run: moon update
+
+      - name: the api page matches the interfaces
+        run: |
+          python3 scripts/gen_api.py
+          git diff --exit-code docs/api.html
+
+      - name: the numbers on the pages match the source
+        run: |
+          python3 scripts/gen_site_data.py
+          git diff --exit-code docs
+
+      - name: compile the library for the page
+        run: |
+          moon build src/examples/browser --target js --release
+          mkdir -p docs/engine
+          cp _build/js/release/build/examples/browser/browser.js docs/engine/moonskill.js
+
+      - name: hand the page the corpus
+        run: python3 scripts/gen_demo_cases.py
+
+      - name: the code on the pages compiles
+        run: python3 scripts/check_snippets.py
+
+      - uses: actions/configure-pages@v6
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-26.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

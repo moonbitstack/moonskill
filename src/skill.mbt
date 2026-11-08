@@ -8,7 +8,7 @@
 /// The specification loads a skill in three tiers, and the fields follow them:
 /// [`Skill::summary`] is the tier a client reads for every skill it knows
 /// about, `body` is the tier it reads once the skill is chosen, and the files
-/// the body points at are read one at a time through [`reference`] when the
+/// the body points at are read one at a time through [`Skill::resolve`] when the
 /// task reaches them.
 pub(all) struct Skill {
   /// The `name` field, trimmed. Empty when the frontmatter has none, or when

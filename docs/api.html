@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API — moonskill</title>
+<meta name="description" content="Every public item of moonskill, generated from the module's interfaces.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script>
+  try {
+    const saved = sessionStorage.getItem("moonskill:theme");
+    const type = (performance.getEntriesByType("navigation")[0] || {}).type;
+    if (saved && type !== "reload") document.documentElement.dataset.theme = saved;
+    else sessionStorage.removeItem("moonskill:theme");
+  } catch (error) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="mark" href="index.html">moonskill</a>
+    <nav class="nav" aria-label="Pages">
+      <a href="index.html">home</a>
+      <a href="guide.html">guide</a>
+      <a href="api.html" aria-current="page">api</a>
+      <a href="screening.html">screening</a>
+      <a href="https://github.com/moonbitstack/moonskill">github</a>
+    </nav>
+    <button class="theme" type="button" data-theme-toggle>paper</button>
+  </div>
+</header>
+
+<main class="sheet">
+
+  <section class="hero">
+    <p class="eyebrow">API &middot; 44 public items</p>
+    <h1>Everything the module publishes.<em>Generated from the interfaces, not typed after them.</em></h1>
+    <p class="standfirst">Both packages, in the order the interface files list them. A signature here is the one the compiler sees; the sentence under it is the comment above the item in the source.</p>
+  </section>
+
+  <section class="entry" id="pkg-root" data-section data-label="01 moonbitstack/moonskill">
+    <div class="rail"><span class="num">01</span><span>document</span></div>
+    <div class="body">
+      <h2>moonbitstack/moonskill</h2>
+      <p class="lede">The document: what a SKILL.md may say, how it is judged, and how a client reads the three tiers.</p>
+<h3 class="api-group">Values</h3>
+<div class="api-list">
+<div class="api-item" id="base-name">
+<div class="api-head">
+<code class="api-name">base_name</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn base_name(StringView) -&gt; String</pre>
+<div class="api-doc"><p>The last segment of a path, which is the directory name the specification compares a skill&#x27;s <code>name</code> against.</p></div>
+</div>
+<div class="api-item" id="discover">
+<div class="api-head">
+<code class="api-name">discover</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">async fn discover(&amp;Source) -&gt; Array[Skill]</pre>
+<div class="api-doc"><p>Every skill a source offers, read and parsed.</p><p>A source that lists a directory with no document is a broken source, not an empty one, so <code>discover</code> refuses rather than skipping it: silently offering a model a skill it cannot open is how an agent comes to invent a tool it does not have.</p></div>
+</div>
+<div class="api-item" id="faults">
+<div class="api-head">
+<code class="api-name">faults</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn faults(StringView, root? : String, limits? : Limits) -&gt; Array[Fault]</pre>
+<div class="api-doc"><p>Every fault in a document, from the fence to the last rule.</p><p>This is the call a validator makes: a document that does not parse is one fault of kind <code>malformed</code>, and the rest of the list is whatever <code>validate</code> finds in the fields. It is the whole check of a <code>SKILL.md</code> in one function, which is what a command line and a test both want.</p></div>
+</div>
+<div class="api-item" id="join-path">
+<div class="api-head">
+<code class="api-name">join_path</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn join_path(StringView, StringView) -&gt; String</pre>
+<div class="api-doc"><p><code>a</code> and <code>b</code> with exactly one <code>/</code> between them, whichever slashes either already carries.</p><p>Paths are joined here rather than with the platform&#x27;s separator: a skill root is a key in a <code>Source</code>, and a key that reads the same on every system is the one a report can be compared against.</p></div>
+</div>
+<div class="api-item" id="limits">
+<div class="api-head">
+<code class="api-name">limits</code>
+<span class="api-kind">value</span>
+</div>
+<pre class="api-sig">let limits : Limits</pre>
+<div class="api-doc"><p>The limits of the Agent Skills specification.</p></div>
+</div>
+<div class="api-item" id="load">
+<div class="api-head">
+<code class="api-name">load</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">async fn load(&amp;Source, root~ : String) -&gt; Skill</pre>
+<div class="api-doc"><p>One skill from a directory.</p><p>Raises when the directory holds no document, or when the document is not readable as one: a caller that wants to carry on past a broken skill uses <code>check</code>, which reports the same trouble as a fault.</p></div>
+</div>
+<div class="api-item" id="parse">
+<div class="api-head">
+<code class="api-name">parse</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn parse(StringView, root? : String) -&gt; Skill raise Refused</pre>
+<div class="api-doc"><p>Read a skill document.</p><p>The document opens with a <code>---</code> fence, then YAML, then a closing <code>---</code>, then the Markdown body. The YAML is read as StrictYAML, the dialect the specification was written against: every scalar is text, so <code>name: 42</code> is the name forty-two rather than a number, and a frontmatter that means something other than what it looks like is refused instead of guessed.</p><p><code>root</code> is the directory the document came from. <code>validate</code> compares the directory name with the skill name, and <code>Skill::location</code> needs it to name the document; leave it out when the text has no directory yet.</p><p>Reading is lenient about the fields themselves: a document with no <code>name</code> still parses, and <code>validate</code> says what is wrong with it. Only a document that is not a skill document at all is refused.</p></div>
+</div>
+<div class="api-item" id="prompt">
+<div class="api-head">
+<code class="api-name">prompt</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn prompt(ArrayView[Skill]) -&gt; String</pre>
+<div class="api-doc"><p>The block a client puts in a system prompt so a model knows which skills exist, without putting their bodies in the context.</p><p>This is the first tier of the specification&#x27;s progressive disclosure: one entry per skill, the name and the description, and where the document is so the model can ask for the rest. A skill with an empty description still gets an entry — a model that cannot see the name cannot choose the skill, and the description is what <code>validate</code> reports.</p></div>
+</div>
+<div class="api-item" id="validate">
+<div class="api-head">
+<code class="api-name">validate</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn validate(Skill, limits? : Limits) -&gt; Array[Fault]</pre>
+<div class="api-doc"><p>Every rule the specification states about the frontmatter, judged against the skill&#x27;s own text.</p><p>The list is empty when the skill is valid. It is not a refusal: a validator reports all the faults at once, because a person fixing a document wants the whole list rather than the first line.</p><p>Two things are deliberately not faults. The body length and the token budget are recommendations — the specification asks for a <code>SKILL.md</code> under five hundred lines and says nothing breaks when it is longer — and an unknown key under <code>metadata</code> is the caller&#x27;s business, since the specification reserves that mapping for clients.</p></div>
+</div>
+</div>
+<h3 class="api-group">Errors</h3>
+<div class="api-type" id="refused">
+<div class="api-head">
+<code class="api-name">Refused</code>
+<span class="api-kind">error</span>
+</div>
+<pre class="api-sig">pub(all) suberror Refused</pre>
+<table class="api-members"><thead><tr><th scope="col">Variant</th><th scope="col">Payload</th><th scope="col">Meaning</th></tr></thead><tbody><tr><td><code>MissingFrontmatter</code></td><td>&mdash;</td><td>The text does not open with the <code>---</code> fence.</td></tr><tr><td><code>UnclosedFrontmatter</code></td><td>&mdash;</td><td>The opening fence has no closing <code>---</code>.</td></tr><tr><td><code>BadYaml</code></td><td>String</td><td>The frontmatter is not YAML the strict reader accepts. The text is the reader&#x27;s complaint, which begins with the line and column.</td></tr><tr><td><code>NotAMapping</code></td><td>&mdash;</td><td>The frontmatter is YAML, but not a mapping.</td></tr><tr><td><code>NotUtf8</code></td><td>Int32</td><td>The bytes are not UTF-8; the offset is where decoding stopped.</td></tr><tr><td><code>NoDocument</code></td><td>&mdash;</td><td>A skill directory offered neither <code>SKILL.md</code> nor <code>skill.md</code>.</td></tr></tbody></table>
+</div>
+<div class="api-list api-methods">
+<div class="api-item" id="refused-equal">
+<div class="api-head">
+<code class="api-name">Refused::equal</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Refused::equal(Self, Self) -&gt; Bool</pre>
+</div>
+<div class="api-item" id="refused-message">
+<div class="api-head">
+<code class="api-name">Refused::message</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Refused::message(Self) -&gt; String</pre>
+<div class="api-doc"><p>The refusal in one sentence, worded as the reference validator words it so a report from either reads the same.</p></div>
+</div>
+<div class="api-item" id="refused-not-equal">
+<div class="api-head">
+<code class="api-name">Refused::not_equal</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Refused::not_equal(Self, Self) -&gt; Bool</pre>
+</div>
+<div class="api-item" id="refused-output">
+<div class="api-head">
+<code class="api-name">Refused::output</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Refused::output(Self, &amp;Logger) -&gt; Unit</pre>
+</div>
+<div class="api-item" id="refused-to-repr">
+<div class="api-head">
+<code class="api-name">Refused::to_repr</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Refused::to_repr(Self) -&gt; @debug.Repr</pre>
+</div>
+<div class="api-item" id="refused-to-string">
+<div class="api-head">
+<code class="api-name">Refused::to_string</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Refused::to_string(Self) -&gt; String</pre>
+</div>
+</div>
+<p class="api-impl">implements <code>Show</code></p>
+<h3 class="api-group">Types and methods</h3>
+<div class="api-type" id="fault">
+<div class="api-head">
+<code class="api-name">Fault</code>
+<span class="api-kind">enum</span>
+</div>
+<pre class="api-sig">pub(all) enum Fault</pre>
+<table class="api-members"><thead><tr><th scope="col">Variant</th><th scope="col">Payload</th><th scope="col">Meaning</th></tr></thead><tbody><tr><td><code>UnexpectedFields</code></td><td>Array[String]</td><td>Frontmatter keys the specification does not define, sorted.</td></tr><tr><td><code>MissingName</code></td><td>&mdash;</td><td>The frontmatter has no <code>name</code>.</td></tr><tr><td><code>NameEmpty</code></td><td>&mdash;</td><td><code>name</code> is empty, blank, or not text.</td></tr><tr><td><code>NameTooLong</code></td><td>String, Int32, Int32</td><td><code>name</code> is longer than the limit: the name, how long it is, and the limit.</td></tr><tr><td><code>NameNotLowercase</code></td><td>String</td><td><code>name</code> has an uppercase letter.</td></tr><tr><td><code>NameEdgeHyphen</code></td><td>&mdash;</td><td><code>name</code> starts or ends with a hyphen.</td></tr><tr><td><code>NameDoubleHyphen</code></td><td>&mdash;</td><td><code>name</code> has two hyphens in a row.</td></tr><tr><td><code>NameBadCharacter</code></td><td>String</td><td><code>name</code> has a character that is neither a letter, a digit, nor a hyphen.</td></tr><tr><td><code>NameMismatch</code></td><td>String, String</td><td>The directory and the name differ: the directory name, then the name.</td></tr><tr><td><code>MissingDescription</code></td><td>&mdash;</td><td>The frontmatter has no <code>description</code>.</td></tr><tr><td><code>DescriptionEmpty</code></td><td>&mdash;</td><td><code>description</code> is empty, blank, or not text.</td></tr><tr><td><code>DescriptionTooLong</code></td><td>Int32, Int32</td><td><code>description</code> is longer than the limit: how long it is, then the limit.</td></tr><tr><td><code>CompatibilityNotText</code></td><td>&mdash;</td><td><code>compatibility</code> is present and is not text.</td></tr><tr><td><code>CompatibilityTooLong</code></td><td>Int32, Int32</td><td><code>compatibility</code> is longer than the limit: how long it is, then the limit.</td></tr><tr><td><code>Malformed</code></td><td>Refused</td><td>The document could not be read as a skill at all.</td></tr><tr><td><code>MissingPath</code></td><td>String</td><td>There is nothing at the path.</td></tr><tr><td><code>NotADirectory</code></td><td>String</td><td>The path is a file, not a skill directory.</td></tr><tr><td><code>MissingDocument</code></td><td>&mdash;</td><td>The directory has no <code>SKILL.md</code> or <code>skill.md</code>.</td></tr></tbody></table>
+</div>
+<div class="api-list api-methods">
+<div class="api-item" id="fault-equal">
+<div class="api-head">
+<code class="api-name">Fault::equal</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Fault::equal(Self, Self) -&gt; Bool</pre>
+</div>
+<div class="api-item" id="fault-kind">
+<div class="api-head">
+<code class="api-name">Fault::kind</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Fault::kind(Self) -&gt; String</pre>
+<div class="api-doc"><p>A stable tag for the fault, for reports that are read by a program rather than by a person. The wording of <code>Fault::message</code> may be rephrased; these do not change.</p></div>
+</div>
+<div class="api-item" id="fault-message">
+<div class="api-head">
+<code class="api-name">Fault::message</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Fault::message(Self) -&gt; String</pre>
+<div class="api-doc"><p>The fault in one sentence, worded as the reference validator words it so a report from either reads the same.</p></div>
+</div>
+<div class="api-item" id="fault-not-equal">
+<div class="api-head">
+<code class="api-name">Fault::not_equal</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Fault::not_equal(Self, Self) -&gt; Bool</pre>
+</div>
+<div class="api-item" id="fault-output">
+<div class="api-head">
+<code class="api-name">Fault::output</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Fault::output(Self, &amp;Logger) -&gt; Unit</pre>
+</div>
+<div class="api-item" id="fault-to-repr">
+<div class="api-head">
+<code class="api-name">Fault::to_repr</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Fault::to_repr(Self) -&gt; @debug.Repr</pre>
+</div>
+<div class="api-item" id="fault-to-string">
+<div class="api-head">
+<code class="api-name">Fault::to_string</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Fault::to_string(Self) -&gt; String</pre>
+</div>
+</div>
+<p class="api-impl">implements <code>Show</code></p>
+<div class="api-type" id="limits">
+<div class="api-head">
+<code class="api-name">Limits</code>
+<span class="api-kind">struct</span>
+</div>
+<pre class="api-sig">pub(all) struct Limits</pre>
+<div class="api-doc"><p>The length limits the specification puts on a frontmatter field.</p><p>They are a record rather than three constants because a client may enforce a tighter budget than the specification&#x27;s — a model with a smaller context wants shorter descriptions — and because a test that reads the boundary should read it from one place.</p></div>
+<table class="api-members"><thead><tr><th scope="col">Field</th><th scope="col">Type</th><th scope="col">Meaning</th></tr></thead><tbody><tr><td><code>name</code></td><td>Int32</td><td>The longest <code>name</code>, in characters. The specification says 64.</td></tr><tr><td><code>description</code></td><td>Int32</td><td>The longest <code>description</code>, in characters. The specification says 1024.</td></tr><tr><td><code>compatibility</code></td><td>Int32</td><td>The longest <code>compatibility</code>, in characters. The specification says 500.</td></tr></tbody></table>
+</div>
+<div class="api-type" id="skill">
+<div class="api-head">
+<code class="api-name">Skill</code>
+<span class="api-kind">struct</span>
+</div>
+<pre class="api-sig">pub(all) struct Skill</pre>
+<div class="api-doc"><p>A skill document: the frontmatter the specification defines, the Markdown an agent reads when the skill is activated, and the directory it came from.</p><p>The specification loads a skill in three tiers, and the fields follow them: <code>Skill::summary</code> is the tier a client reads for every skill it knows about, <code>body</code> is the tier it reads once the skill is chosen, and the files the body points at are read one at a time through <code>Skill::resolve</code> when the task reaches them.</p></div>
+<table class="api-members"><thead><tr><th scope="col">Field</th><th scope="col">Type</th><th scope="col">Meaning</th></tr></thead><tbody><tr><td><code>name</code></td><td>String</td><td>The <code>name</code> field, trimmed. Empty when the frontmatter has none, or when it is not text.</td></tr><tr><td><code>description</code></td><td>String</td><td>The <code>description</code> field, trimmed. Empty when the frontmatter has none.</td></tr><tr><td><code>body</code></td><td>String</td><td>The Markdown after the frontmatter, trimmed at both ends.</td></tr><tr><td><code>meta</code></td><td>Map[String, @json.Json]</td><td>The whole frontmatter, so a client reads fields this library does not name — <code>license</code>, <code>metadata</code>, <code>allowed-tools</code> — and so <code>validate</code> can judge the text as written rather than as trimmed.</td></tr><tr><td><code>root</code></td><td>String</td><td>The skill directory as given to <code>parse</code>, or as returned by a <code>Source</code>. Empty means there is no directory to check the name against.</td></tr></tbody></table>
+</div>
+<div class="api-list api-methods">
+<div class="api-item" id="skill-allowed-tools">
+<div class="api-head">
+<code class="api-name">Skill::allowed_tools</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Skill::allowed_tools(Self) -&gt; String?</pre>
+<div class="api-doc"><p>The experimental <code>allowed-tools</code> field, or <code>None</code>.</p></div>
+</div>
+<div class="api-item" id="skill-compatibility">
+<div class="api-head">
+<code class="api-name">Skill::compatibility</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Skill::compatibility(Self) -&gt; String?</pre>
+<div class="api-doc"><p>The <code>compatibility</code> field, or <code>None</code> when it is absent or not text.</p></div>
+</div>
+<div class="api-item" id="skill-license">
+<div class="api-head">
+<code class="api-name">Skill::license</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Skill::license(Self) -&gt; String?</pre>
+<div class="api-doc"><p>The <code>license</code> field, or <code>None</code> when it is absent or not text.</p></div>
+</div>
+<div class="api-item" id="skill-location">
+<div class="api-head">
+<code class="api-name">Skill::location</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Skill::location(Self) -&gt; String</pre>
+<div class="api-doc"><p>The path of the document, which is what a client hands back to the model so it can open the skill if it wants the body.</p></div>
+</div>
+<div class="api-item" id="skill-metadata">
+<div class="api-head">
+<code class="api-name">Skill::metadata</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Skill::metadata(Self) -&gt; Map[String, String]?</pre>
+<div class="api-doc"><p>The <code>metadata</code> mapping as text, or <code>None</code> when it is absent. The specification defines it as string keys to string values; a value that is not text is skipped rather than turned into JSON spelling.</p></div>
+</div>
+<div class="api-item" id="skill-resolve">
+<div class="api-head">
+<code class="api-name">Skill::resolve</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Skill::resolve(Self, StringView) -&gt; String?</pre>
+<div class="api-doc"><p>The path of a file the body refers to, resolved against the skill root, or <code>None</code> when the reference is not a file inside this skill.</p><p>This is how the third tier is read: the body says <code>references/REFERENCE.md</code>, the model asks for that file, and the client fetches it from the same <code>Source</code> the skill came from. A reference that climbs out of the directory — <code>../other-skill/SKILL.md</code>, an absolute path, a URL — is <code>None</code> rather than a path: a skill may point at its own files and nowhere else.</p></div>
+</div>
+<div class="api-item" id="skill-summary">
+<div class="api-head">
+<code class="api-name">Skill::summary</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Skill::summary(Self) -&gt; String</pre>
+<div class="api-doc"><p>The metadata tier: what a client puts in front of a model before the model has chosen anything, which the specification budgets at about a hundred tokens per skill. One line, so a list of them stays a list.</p></div>
+</div>
+</div>
+<h3 class="api-group">Traits</h3>
+<div class="api-type" id="source">
+<div class="api-head">
+<code class="api-name">Source</code>
+<span class="api-kind">trait</span>
+</div>
+<pre class="api-sig">pub(open) trait Source</pre>
+<div class="api-doc"><p>Where skill documents come from.</p><p>The specification says a skill is a directory, and this is that directory seen as two questions: which skills are here, and what is in this file. A client with skills in a tarball, a database, or an HTTP cache implements the two methods and gets <code>discover</code>, the three-tier loading, and everything else unchanged — nothing above this trait knows what a filesystem is.</p><p><code>list</code> returns skill roots: the directories that hold a document, in the order the client wants them offered to a model. <code>read</code> returns the bytes of a path. Both speak of paths with <code>/</code> between segments whatever the platform uses, so the same report reads the same everywhere.</p></div>
+<table class="api-members"><thead><tr><th scope="col">Method</th><th scope="col">Signature</th><th scope="col">Meaning</th></tr></thead><tbody><tr><td><code>list</code></td><td>list(Self) -&gt; Array[String]</td><td>The skill roots this source offers.</td></tr><tr><td><code>read</code></td><td>read(Self, String) -&gt; Bytes</td><td>The bytes of one file. The path is a skill root from <code>list</code> joined with a relative name, or a root the caller passed to <code>load</code>.</td></tr></tbody></table>
+</div>
+    </div>
+  </section>
+
+  <section class="entry" id="pkg-fs" data-section data-label="02 moonbitstack/moonskill/fs">
+    <div class="rail"><span class="num">02</span><span>directory</span></div>
+    <div class="body">
+      <h2>moonbitstack/moonskill/fs</h2>
+      <p class="lede">The directory: a tree of skills read from disk, as a source the document package can walk.</p>
+<h3 class="api-group">Values</h3>
+<div class="api-list">
+<div class="api-item" id="check">
+<div class="api-head">
+<code class="api-name">check</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">async fn check(StringView) -&gt; Array[@moonskill.Fault]</pre>
+<div class="api-doc"><p>Every fault in the skill at <code>path</code>, judged as a directory rather than as a document that already parsed.</p><p>This is the check a repository runs over <code>docs/skills/</code> in CI: it covers the three things that can go wrong before a document is read — nothing at the path, a file where a directory should be, no document inside — and then the specification&#x27;s rules about what the document says.</p></div>
+</div>
+<div class="api-item" id="load">
+<div class="api-head">
+<code class="api-name">load</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">async fn load(StringView) -&gt; @moonskill.Skill</pre>
+<div class="api-doc"><p>One skill from a directory.</p><p>Raises when the directory holds no document, or when the document is not readable as one: a caller that wants to carry on past a broken skill uses <code>check</code>, which reports the same trouble as a fault.</p></div>
+</div>
+</div>
+<h3 class="api-group">Types and methods</h3>
+<div class="api-type" id="dir">
+<div class="api-head">
+<code class="api-name">Dir</code>
+<span class="api-kind">struct</span>
+</div>
+<pre class="api-sig">pub(all) struct Dir</pre>
+<div class="api-doc"><p>A directory of skills on disk, seen as a <code>Source</code>(moonbitstack/moonskill).</p><p>The tree the specification describes is one directory per skill, each with a <code>SKILL.md</code>; a directory of skills — <code>docs/skills</code> in a repository — is therefore a <code>Dir</code> whose children are the skills. Paths handed back by <code>Dir::list</code> are built with <code>/</code> on every platform, so a report of a tree reads the same on all three systems the tests run on.</p></div>
+<table class="api-members"><thead><tr><th scope="col">Field</th><th scope="col">Type</th><th scope="col">Meaning</th></tr></thead><tbody><tr><td><code>dir</code></td><td>String</td><td></td></tr></tbody></table>
+</div>
+<div class="api-list api-methods">
+<div class="api-item" id="dir-at">
+<div class="api-head">
+<code class="api-name">Dir::at</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Dir::at(StringView) -&gt; Self</pre>
+<div class="api-doc"><p>The tree rooted at <code>path</code>.</p></div>
+</div>
+<div class="api-item" id="dir-list">
+<div class="api-head">
+<code class="api-name">Dir::list</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">async fn Dir::list(Self) -&gt; Array[String]</pre>
+</div>
+<div class="api-item" id="dir-path">
+<div class="api-head">
+<code class="api-name">Dir::path</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Dir::path(Self) -&gt; String</pre>
+<div class="api-doc"><p>The root this tree was opened at.</p></div>
+</div>
+<div class="api-item" id="dir-read">
+<div class="api-head">
+<code class="api-name">Dir::read</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">async fn Dir::read(Self, String) -&gt; Bytes</pre>
+</div>
+</div>
+<p class="api-impl">implements <code>@moonskill.Source</code></p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>moonskill &middot; api</span>
+  <span class="right">
+    <a href="index.html">home</a>
+    <a href="guide.html">guide</a>
+    <a href="https://github.com/moonbitstack/moonskill">source</a>
+  </span>
+</footer>
+
+<div class="edge" aria-hidden="true">
+  <div class="edge-line"></div>
+  <div class="edge-marks"></div>
+  <div class="edge-thumb"></div>
+</div>
+
+<script type="module" src="site.js"></script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guide — moonskill</title>
+<meta name="description" content="From a document to a shortlist: parsing, judging, discovering and prompting with moonskill.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script>
+  try {
+    const saved = sessionStorage.getItem("moonskill:theme");
+    const type = (performance.getEntriesByType("navigation")[0] || {}).type;
+    if (saved && type !== "reload") document.documentElement.dataset.theme = saved;
+    else sessionStorage.removeItem("moonskill:theme");
+  } catch (error) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="mark" href="index.html">moonskill</a>
+    <nav class="nav" aria-label="Pages">
+      <a href="index.html">home</a>
+      <a href="guide.html" aria-current="page">guide</a>
+      <a href="api.html">api</a>
+      <a href="screening.html">screening</a>
+      <a href="https://github.com/moonbitstack/moonskill">github</a>
+    </nav>
+    <button class="theme" type="button" data-theme-toggle>paper</button>
+  </div>
+</header>
+
+<main class="sheet">
+
+  <section class="hero">
+    <p class="eyebrow">Guide &middot; eight steps</p>
+    <h1>From a document to a shortlist.<em>Nothing here needs an agent to try it.</em></h1>
+    <p class="standfirst">Each step is a program that runs: the blocks below are checked against this version, and the output under them is what they print.</p>
+  </section>
+
+  <section class="entry" id="install" data-section data-label="01 install">
+    <div class="rail"><span class="num">01</span><span>Install</span></div>
+    <div class="body">
+      <h2>Add the package</h2>
+      <div class="code">
+        <div class="code-head"><span>shell</span><button class="copy" type="button">copy</button></div>
+        <pre data-lang="sh">moon add moonbitstack/moonskill</pre>
+      </div>
+      <p>Two packages come with it: <code>moonbitstack/moonskill</code>, which reads text, and <code>moonbitstack/moonskill/fs</code>, which reads directories on the native target.</p>
+      <div class="code">
+        <div class="code-head"><span>moon.pkg</span><button class="copy" type="button">copy</button></div>
+        <pre data-lang="toml">import {
+  "moonbitstack/moonskill",
+  "moonbitstack/moonskill/fs",
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="entry" id="read" data-section data-label="02 read">
+    <div class="rail"><span class="num">02</span><span>Read a document</span></div>
+    <div class="body">
+      <h2>The header, then the body</h2>
+      <p>A skill begins with a <code>---</code> fence, a YAML mapping, and a second fence. <code>parse</code> returns the three things a client uses: the name, the description and the Markdown below the fence. <code>root</code> is the directory the document was found in — passing it is what lets the checker compare the two later.</p>
+      <div class="code">
+        <div class="code-head"><span>moonbit</span><button class="copy" type="button">copy</button></div>
+        <pre data-lang="mbt">test {
+  let text =
+    #|---
+    #|name: pdf-tools
+    #|description: Extract text from PDFs.
+    #|---
+    #|# PDF tools
+  let skill = @moonskill.parse(text, root="pdf-tools")
+  assert_eq(skill.summary(), "pdf-tools: Extract text from PDFs.")
+  assert_eq(skill.location(), "pdf-tools/SKILL.md")
+}</pre>
+        <pre class="out">pdf-tools: Extract text from PDFs.</pre>
+      </div>
+      <p><code>summary</code> is the tier-1 line: the name and the description, joined so a list of them stays a list. <code>location</code> is where the document sits, which is what a client hands back to a model that asked for the body.</p>
+
+      <h3>What parsing refuses</h3>
+      <p>Parsing is lenient about fields and strict about shape. Missing <code>name</code> still parses — <code>validate</code> is what reports it — but a document that is not a skill document at all is refused, and the refusal is a value you can match on.</p>
+      <table>
+        <caption class="sr-only">The six refusals</caption>
+        <thead><tr><th scope="col">Refusal</th><th scope="col">When</th></tr></thead>
+        <tbody>
+          <tr><td><code>MissingFrontmatter</code></td><td>The text does not open with <code>---</code>.</td></tr>
+          <tr><td><code>UnclosedFrontmatter</code></td><td>The opening fence has no closing one.</td></tr>
+          <tr><td><code>BadYaml</code></td><td>The frontmatter is not YAML the strict reader accepts; the message begins with the line and column.</td></tr>
+          <tr><td><code>NotAMapping</code></td><td>The frontmatter is YAML, but a list or a scalar rather than a mapping.</td></tr>
+          <tr><td><code>NotUtf8</code></td><td>The bytes are not UTF-8; the offset is where decoding stopped.</td></tr>
+          <tr><td><code>NoDocument</code></td><td>A directory offered as a skill holds neither <code>SKILL.md</code> nor <code>skill.md</code>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="entry" id="judge" data-section data-label="03 judge">
+    <div class="rail"><span class="num">03</span><span>Judge it</span></div>
+    <div class="body">
+      <h2>Every fault, in one pass</h2>
+      <p><code>faults</code> parses and validates in one call and returns a list rather than stopping at the first problem, because a person fixing a document wants the whole list. A document that does not parse comes back as one fault of kind <code>malformed</code>, which is what lets a batch be checked without a single bad file ending the run.</p>
+      <div class="code">
+        <div class="code-head"><span>moonbit</span><button class="copy" type="button">copy</button></div>
+        <pre data-lang="mbt">test {
+  let text =
+    #|---
+    #|name: PDF_Tools
+    #|description: Extract text from PDFs.
+    #|---
+    #|Body
+  let faults = @moonskill.faults(text, root="pdf-tools")
+  assert_eq(faults.length(), 3)
+  assert_eq(faults[0].kind(), "name-not-lowercase")
+  assert_eq(faults[2].kind(), "name-mismatch")
+}</pre>
+        <pre class="out">name-not-lowercase: Skill name 'PDF_Tools' must be lowercase
+name-bad-character: Skill name 'PDF_Tools' contains invalid characters. Only letters, digits, and hyphens are allowed.
+name-mismatch: Directory name 'pdf-tools' must match skill name 'PDF_Tools'</pre>
+      </div>
+      <p><code>kind</code> is the tag a report is filed under and does not change with the wording; <code>message</code> is the sentence for a person. The order is the order a reader meets the document: fields that do not belong, the name, the description, then <code>compatibility</code>.</p>
+    </div>
+  </section>
+
+  <section class="entry" id="tiers" data-section data-label="04 the three tiers">
+    <div class="rail"><span class="num">04</span><span>The three tiers</span></div>
+    <div class="body">
+      <h2>Body first, files later</h2>
+      <p>The body is already in the <code>Skill</code> you parsed: no second read, no file opened. The files it points at are a different matter, and <code>resolve</code> is the gate — it joins the root and refuses anything that would climb out of the skill.</p>
+      <div class="code">
+        <div class="code-head"><span>moonbit</span><button class="copy" type="button">copy</button></div>
+        <pre data-lang="mbt">test {
+  let text =
+    #|---
+    #|name: pdf-tools
+    #|description: Extract text from PDFs.
+    #|---
+    #|Run scripts/extract.py on the file.
+  let skill = @moonskill.parse(text, root="pdf-tools")
+  assert_eq(skill.resolve("scripts/extract.py"), Some("pdf-tools/scripts/extract.py"))
+  assert_eq(skill.resolve("../other-skill/SKILL.md"), None)
+  assert_eq(skill.resolve("/etc/passwd"), None)
+}</pre>
+      </div>
+      <p>Reading the file itself is the source's job. With <code>@fs.Dir</code> that is one call:</p>
+      <div class="code">
+        <div class="code-head"><span>moonbit, native</span><button class="copy" type="button">copy</button></div>
+        <pre data-lang="mbt" data-target="native">async test {
+  let tree = @fs.Dir::at("docs/skills")
+  let skill = @moonskill.load(tree, root="moonskill")
+  if skill.resolve("SKILL.md") is Some(path) {
+    let bytes = tree.read(path)
+    assert_eq(bytes.length() &gt; 0, true)
+  }
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="entry" id="discover" data-section data-label="05 discover">
+    <div class="rail"><span class="num">05</span><span>Discover a tree</span></div>
+    <div class="body">
+      <h2>A source, not a filesystem</h2>
+      <p><code>discover</code> asks a <code>Source</code> which skill roots it offers and reads each one. The trait is two methods, so skills kept in a tarball, a database or an HTTP cache need no change above the trait.</p>
+      <div class="code">
+        <div class="code-head"><span>moonbit, native</span><button class="copy" type="button">copy</button></div>
+        <pre data-lang="mbt" data-target="native">async test {
+  let tree = @fs.Dir::at("docs/skills")
+  let skills = @moonskill.discover(tree)
+  assert_eq(skills.length() &gt; 0, true)
+  assert_eq(skills[0].name, "moonskill")
+}</pre>
+      </div>
+      <p>A directory that is offered as a skill but has no document is refused rather than skipped. Offering a model a skill it cannot open is how an agent comes to invent a tool it does not have.</p>
+      <p>Writing a source of your own is two methods: <code>list</code> returns the roots, <code>read</code> returns the bytes of a path. Paths speak of <code>/</code> between segments whatever the platform uses, so one report reads the same everywhere.</p>
+    </div>
+  </section>
+
+  <section class="entry" id="prompt" data-section data-label="06 prompt">
+    <div class="rail"><span class="num">06</span><span>Put the names in front</span></div>
+    <div class="body">
+      <h2>The block a model chooses from</h2>
+      <p><code>prompt</code> writes tier 1 as XML: one entry per skill, with the name, the description, and where the document is. A skill with an empty description still gets an entry — a model that cannot see the name cannot ask for the skill.</p>
+      <div class="code">
+        <div class="code-head"><span>moonbit</span><button class="copy" type="button">copy</button></div>
+        <pre data-lang="mbt">test {
+  let text =
+    #|---
+    #|name: pdf-tools
+    #|description: Extract text from PDFs.
+    #|---
+    #|Body
+  let skill = @moonskill.parse(text, root="pdf-tools")
+  let block = @moonskill.prompt([skill])
+  assert_eq(block.contains("&lt;name&gt;\npdf-tools\n&lt;/name&gt;"), true)
+  assert_eq(block.contains("&lt;location&gt;\npdf-tools/SKILL.md\n&lt;/location&gt;"), true)
+}</pre>
+        <pre class="out">&lt;available_skills&gt;
+&lt;skill&gt;
+&lt;name&gt;
+pdf-tools
+&lt;/name&gt;
+&lt;description&gt;
+Extract text from PDFs.
+&lt;/description&gt;
+&lt;location&gt;
+pdf-tools/SKILL.md
+&lt;/location&gt;
+&lt;/skill&gt;
+&lt;/available_skills&gt;</pre>
+      </div>
+      <p>Descriptions are escaped, so a document that says <em>use when the task needs &lt;table&gt;</em> reads as text inside the block instead of closing an element early.</p>
+    </div>
+  </section>
+
+  <section class="entry" id="limits" data-section data-label="07 limits">
+    <div class="rail"><span class="num">07</span><span>Limits</span></div>
+    <div class="body">
+      <h2>A tighter budget</h2>
+      <p>The three lengths the specification fixes are a record, so a client with a smaller context can hold a skill to less without changing the document.</p>
+      <div class="code">
+        <div class="code-head"><span>moonbit</span><button class="copy" type="button">copy</button></div>
+        <pre data-lang="mbt">test {
+  let text =
+    #|---
+    #|name: my-skill
+    #|description: A description long enough to break.
+    #|---
+    #|Body
+  let tight : @moonskill.Limits = { name: 64, description: 8, compatibility: 500 }
+  let faults = @moonskill.faults(text, root="my-skill", limits=tight)
+  assert_eq(faults.length(), 1)
+  assert_eq(faults[0].kind(), "description-too-long")
+}</pre>
+      </div>
+      <p>The defaults are <code>@moonskill.limits</code>: 64 for the name, 1024 for the description, 500 for <code>compatibility</code>.</p>
+    </div>
+  </section>
+
+  <section class="entry" id="shell" data-section data-label="08 from a shell">
+    <div class="rail"><span class="num">08</span><span>From a shell</span></div>
+    <div class="body">
+      <h2>One exit code per directory</h2>
+      <p><code>src/cmd/skillcheck</code> takes any number of directories, prints one line for each, and exits non-zero when anything failed.</p>
+      <div class="code">
+        <div class="code-head"><span>shell</span><button class="copy" type="button">copy</button></div>
+        <pre data-lang="sh">moon run src/cmd/skillcheck --target native -- docs/skills/moonskill</pre>
+        <pre class="out">ok    docs/skills/moonskill</pre>
+      </div>
+      <div class="code">
+        <div class="code-head"><span>shell</span><button class="copy" type="button">copy</button></div>
+        <pre data-lang="sh">moon run src/cmd/skillcheck --target native -- broken/</pre>
+        <pre class="out">FAIL  broken/
+      - name-not-lowercase: Skill name 'Broken' must be lowercase</pre>
+      </div>
+      <p><code>--json</code> prints one object per directory instead, which is what a program wants to read: <code>path</code>, <code>valid</code>, and the faults with their tags.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>moonskill &middot; guide</span>
+  <span class="right">
+    <a href="index.html">home</a>
+    <a href="api.html">api</a>
+    <a href="https://github.com/moonbitstack/moonskill">source</a>
+  </span>
+</footer>
+
+<div class="edge" aria-hidden="true">
+  <div class="edge-line"></div>
+  <div class="edge-marks"></div>
+  <div class="edge-thumb"></div>
+</div>
+
+<script type="module" src="site.js"></script>
+</body>
+</html>
