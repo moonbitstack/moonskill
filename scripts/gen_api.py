@@ -31,6 +31,40 @@ DECL = re.compile(
 )
 
 
+def write_native_interfaces():
+    """Ask the toolchain for each backend's interface.
+
+    `moon check` only type-checks; the per-backend interface file is written by `moon info`. That
+    command also rewrites the committed `pkg.generated.mbti` when the backends disagree, so the
+    committed files are put back afterwards — this script reads the build, it does not change the tree.
+    """
+    committed = {path: path.read_bytes() for path in SRC.rglob("pkg.generated.mbti")}
+    run = subprocess.run(["moon", "info", "--target", "native"], cwd=ROOT, capture_output=True, text=True)
+    for path, before in committed.items():
+        if path.read_bytes() != before:
+            path.write_bytes(before)
+    if run.returncode != 0:
+        print(run.stdout + run.stderr)
+        raise SystemExit("moon info --target native failed; the interfaces are not available")
+
+
+def write_native_interfaces():
+    """Ask the toolchain for each backend's interface.
+
+    `moon check` only type-checks; the per-backend interface file is written by `moon info`. That
+    command also rewrites the committed `pkg.generated.mbti` when the backends disagree, so the
+    committed files are put back afterwards — this script reads the build, it does not change the tree.
+    """
+    committed = {path: path.read_bytes() for path in SRC.rglob("pkg.generated.mbti")}
+    run = subprocess.run(["moon", "info", "--target", "native"], cwd=ROOT, capture_output=True, text=True)
+    for path, before in committed.items():
+        if path.read_bytes() != before:
+            path.write_bytes(before)
+    if run.returncode != 0:
+        print(run.stdout + run.stderr)
+        raise SystemExit("moon info --target native failed; the interfaces are not available")
+
+
 def packages():
     """Every package of this module that is part of the library, deepest last."""
     found = []
@@ -42,13 +76,30 @@ def packages():
     return sorted(found, key=lambda rel: (rel != ".", rel))
 
 
-def interface(rel):
-    """The interface a package publishes, preferring the native backend's file."""
-    build = BUILD / ("moonskill.mbti" if rel == "." else f"{rel}/{rel.rsplit('/', 1)[-1]}.mbti")
+def native_interface(rel):
+    """The interface the native backend produced for a package, wherever the build put it."""
+    module = "moonbitstack/moonskill" + ("" if rel == "." else "/" + rel)
+    root = ROOT / "_build" / "native"
+    for path in sorted(root.rglob("*.mbti")) if root.is_dir() else []:
+        text = path.read_text(encoding="utf-8", errors="replace")
+        if f'package "{module}"' in text:
+            return text
+    return None
+
+
+def interface(rel):  # noqa: D401 - returns the text, not the path
+    """The interface a package publishes, preferring the native backend's file.
+
+    A package whose files are all `.native.mbt` has an empty interface on the other backends, so the
+    committed file — the one `moon info --target all` writes — says nothing about it. The build's own
+    file does.
+    """
+    built = native_interface(rel)
+    if built is not None:
+        return built
     committed = SRC / rel / "pkg.generated.mbti"
-    if build.exists():
-        return build.read_text(encoding="utf-8")
     if committed.exists():
+        print(f"{rel or '.'}: using the committed interface, which has no native half")
         return committed.read_text(encoding="utf-8")
     raise SystemExit(f"no interface for {rel}: run `moon check --target native` first")
 
@@ -455,7 +506,7 @@ def main():
     parser.add_argument("--check", action="store_true", help="fail when the page is not up to date")
     args = parser.parse_args()
 
-    subprocess.run(["moon", "check", "--target", "native"], cwd=ROOT, capture_output=True)
+    write_native_interfaces()
     docs = doc_comments()
 
     parts = []
@@ -464,6 +515,7 @@ def main():
         text = interface(rel)
         if not any(line.startswith("pub ") for line in text.splitlines()):
             raise SystemExit(f"{rel} publishes nothing; its interface was not written for this backend")
+        print(f"{rel or '.'}: {sum(1 for line in text.splitlines() if line.startswith('pub '))} declarations")
         chunk, count = render_package(rel, text, docs, index)
         parts.append(chunk)
         total += count
