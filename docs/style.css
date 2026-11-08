@@ -217,8 +217,7 @@ textarea,
      edge to edge stops being a sheet */
   max-width: min(var(--sheet), calc(100vw - 72px));
   margin: 0 auto 72px;
-  /* a wider left margin: the gutter the tabs are hung from */
-  padding: 0 66px 58px 96px;
+  padding: 0 66px 58px;
   background-color: var(--paper);
   border: 1px solid var(--rule);
   box-shadow:
@@ -230,24 +229,6 @@ textarea,
 /* the skip link lands here; the sheet is a place, not a control */
 .sheet:focus {
   outline: none;
-}
-
-/* the fold the tabs are hung from: a dashed seam in the left margin, so the
-   strip starts on a line that means something instead of in mid-air */
-.sheet::before {
-  content: "";
-  position: absolute;
-  top: -1px;
-  bottom: 0;
-  left: 60px;
-  width: 1px;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    var(--rule) 0 3px,
-    transparent 3px 8px
-  );
-  opacity: 0.8;
-  pointer-events: none;
 }
 
 /* the clip that holds the sheet to whatever it is lying on */
@@ -273,7 +254,9 @@ textarea,
   display: flex;
   align-items: flex-end;
   gap: 3px;
-  margin: -26px 0 0 -36px;
+  /* one pixel further than the padding, so the tab's border lands on the
+     sheet's own border instead of beside it */
+  margin: -26px 0 0 -67px;
   padding: 0;
 }
 
@@ -1467,10 +1450,6 @@ td code {
     background-image: none;
   }
 
-  .sheet::before {
-    display: none;
-  }
-
   .sheet {
     max-width: none;
     margin: 0 0 40px;
@@ -1632,7 +1611,6 @@ td code {
     break-inside: avoid;
   }
 
-  .sheet::before,
   .tabs,
   .index,
   .clip,
