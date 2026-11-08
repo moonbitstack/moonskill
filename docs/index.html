@@ -17,117 +17,144 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="masthead">
-  <div class="wrap">
-    <a class="mark" href="index.html">moonskill</a>
-    <nav class="nav" aria-label="Pages">
-      <a href="index.html" aria-current="page">home</a>
-      <a href="guide.html">guide</a>
-      <a href="api.html">api</a>
-      <a href="screening.html">screening</a>
-      <a href="https://github.com/moonbitstack/moonskill">github</a>
-    </nav>
-    <button class="theme" type="button" data-theme-toggle>paper</button>
-  </div>
-</header>
-
 <main class="sheet">
 
-  <section class="hero">
-    <p class="eyebrow">Agent Skills &middot; the document, read and judged</p>
-    <h1>Every skill is a résumé.<em>The agent reading it is the one hiring.</em></h1>
-    <p class="standfirst">A skill is a directory with a <code>SKILL.md</code>. The header names it and says what it is for; the body is what a model reads once it has picked this one. <strong>moonskill</strong> reads that document in MoonBit, judges it against the specification, and writes the one-line entries a model chooses from.</p>
-    <p class="contact">
-      <span>moonbitstack/moonskill</span>
-      <span class="sep">/</span>
-      <span>v<span data-version>0.1.0</span></span>
-      <span class="sep">/</span>
-      <span>Apache-2.0</span>
-      <span class="sep">/</span>
-      <a href="https://mooncakes.io/docs/moonbitstack/moonskill">mooncakes</a>
-      <span class="sep">/</span>
-      <a href="https://github.com/moonbitstack/moonskill">source</a>
+  <nav class="tabs" aria-label="Pages">
+    <a class="tab" href="index.html" aria-current="page">home</a>
+    <a class="tab" href="guide.html">guide</a>
+    <a class="tab" href="api.html">api</a>
+    <a class="tab" href="screening.html">screening</a>
+  </nav>
+
+  <div class="docline">
+    <span class="ref">moonbitstack</span>
+    <span>curriculum vitae</span>
+    <span>agent skills</span>
+    <span class="right">
+      <span>cv&ndash;01</span>
+      <a href="https://github.com/moonbitstack/moonskill">github</a>
+      <button class="theme" type="button" data-theme-toggle>paper</button>
+    </span>
+  </div>
+
+  <div class="masthead">
+    <div>
+      <h1>moonskill</h1>
+      <p class="role">The reading side of an agent&rsquo;s shortlist.</p>
+  <dl class="fields">
+    <div class="field"><dt>package</dt><span class="dots"></span><dd>moonbitstack/moonskill</dd></div>
+    <div class="field"><dt>version</dt><span class="dots"></span><dd>v<span data-version>0.1.0</span></dd></div>
+    <div class="field"><dt>licence</dt><span class="dots"></span><dd>Apache-2.0</dd></div>
+    <div class="field"><dt>reach</dt><span class="dots"></span><dd><a href="https://mooncakes.io/docs/moonbitstack/moonskill">mooncakes</a> &middot; <a href="https://github.com/moonbitstack/moonskill">source</a></dd></div>
+  </dl>
+    </div>
+    <figure class="portrait">
+      <span class="frame">
+        <svg viewBox="0 0 120 150" aria-hidden="true">
+          <circle cx="60" cy="58" r="33" fill="none" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M20 76h80" stroke="#ad3a25" stroke-width="1.6"/>
+          <path d="M33 104h54M33 112h40M33 120h46" stroke="currentColor" stroke-width="1.1" opacity="0.55"/>
+        </svg>
+      </span>
+      <figcaption>fig. 1 &mdash; the mark</figcaption>
+    </figure>
+    <span class="stamp">shortlisted<em>agent skills</em></span>
+  </div>
+
+  <section class="section" id="summary" data-section data-label="summary">
+    <h2 class="sec"><span class="n">01</span><span class="t">summary</span><span class="of">of 06</span></h2>
+    <p class="lede">Skills are cheap because nobody reads all of them. A client puts the name and description of every skill it has in front of a model, opens the body of the one the model picked, and reads the files that body points at only when the work reaches them.</p>
+    <p>This library is the reading side of that arrangement. It parses the header strictly, reports every rule a document breaks in one pass, walks a tree of skills through a source you implement, and produces the block a model chooses from. It has no opinion about which agent is reading, and it opens no file by itself.</p>
+    <p class="pen">this is the first thing a model sees
+      <svg viewBox="0 0 46 26" aria-hidden="true"><path d="M3 5c11 11 24 13 39 9" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M35 9l7 5-9 3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </p>
   </section>
 
-  <section class="entry" id="summary" data-section data-label="01 summary">
-    <div class="rail"><span class="num">01</span><span>Summary</span></div>
-    <div class="body">
-      <h2>A short document, read at three depths</h2>
-      <p>Skills are cheap because nobody reads all of them. A client puts the name and description of every skill it has in front of a model, opens the body of the one the model picked, and reads the files that body points at only when the work reaches them. The specification calls that progressive disclosure; the effect is a shortlist that costs a line until something is needed.</p>
-      <p>This library is the reading side of that arrangement. It parses the header strictly, reports every rule a document breaks in one pass, walks a tree of skills through a source you implement, and produces the block a model chooses from. It has no opinion about which agent is reading, and it opens no file by itself.</p>
+  <section class="section" id="work" data-section data-label="what it does">
+    <h2 class="sec"><span class="n">02</span><span class="t">what it does</span><span class="of">of 06</span></h2>
+
+    <div class="entry">
+      <div class="meta"><b>parse</b>text &rarr; skill<br>raise refused</div>
+      <div>
+        <h3>Reads the document</h3>
+        <p>The fence, then a strict YAML header, then the Markdown an agent would read. <code>name: 42</code> is the name <em>forty-two</em>; a document that is not a skill document at all is refused. A field that is merely wrong is left for the next entry.</p>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="meta"><b>validate</b>skill &rarr; faults<br>every rule</div>
+      <div>
+        <h3>Judges it</h3>
+        <p>The three length limits, the character rules, the directory name, the fields that may appear — and the whole list at once, because a person fixing a document wants the list rather than the first line.</p>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="meta"><b>discover</b>source &rarr; skills<br>two methods</div>
+      <div>
+        <h3>Finds them</h3>
+        <p>A tree is walked through <code>Source</code>. A directory reader is included; a tarball, a database or an HTTP cache is a source you write, and everything above the trait stays as it is.</p>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="meta"><b>prompt</b>skills &rarr; block<br>xml, escaped</div>
+      <div>
+        <h3>Offers them</h3>
+        <p>The first tier as an <code>&lt;available_skills&gt;</code> block: name, description and location per skill, escaped so a description that quotes markup stays text.</p>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="meta"><b>skillcheck</b>directory &rarr; exit code<br>--json</div>
+      <div>
+        <h3>Checks it from a shell</h3>
+        <p>Any number of directories, one line each, a non-zero exit when anything failed. <code>--json</code> prints the same verdicts for a program to read.</p>
+      </div>
     </div>
   </section>
 
-  <section class="entry" id="work" data-section data-label="02 what it does">
-    <div class="rail"><span class="num">02</span><span>What it does</span></div>
-    <div class="body">
-      <h2>Five things, one document format</h2>
-      <ul class="rows">
-        <li>
-          <span class="name">parse</span>
-          <span class="about">Reads the fence and the frontmatter with a strict YAML reader, so <code>name: 42</code> is the name <em>forty-two</em>. A document that is not a skill document at all is refused; a field that is merely wrong is left for <code>validate</code> to report.</span>
-        </li>
-        <li>
-          <span class="name">validate</span>
-          <span class="about">Holds the document to every rule the specification states — the three length limits, the character rules, the directory name, the fields that may appear — and returns the whole list at once. A person fixing a document wants the list, not the first line.</span>
-        </li>
-        <li>
-          <span class="name">discover</span>
-          <span class="about">Walks a tree of skills through <code>Source</code>, a two-method trait. A directory reader is included; a tarball, a database or an HTTP cache is a source you write, and everything above it stays as it is.</span>
-        </li>
-        <li>
-          <span class="name">prompt</span>
-          <span class="about">Writes the first tier as an <code>&lt;available_skills&gt;</code> block: name, description and location per skill, escaped so a description that quotes markup stays text.</span>
-        </li>
-        <li>
-          <span class="name">skillcheck</span>
-          <span class="about">The same judgement from a shell. <code>--json</code> for a program to read, a non-zero exit for a script to stop on.</span>
-        </li>
-      </ul>
-    </div>
+  <section class="section" id="tiers" data-section data-label="three tiers">
+    <h2 class="sec"><span class="n">03</span><span class="t">the three tiers</span><span class="of">of 06</span></h2>
+    <p>Each tier is read only when the one above it has been paid for. The indent is the order.</p>
+    <ol class="tiers">
+      <li style="--depth: 0">
+        <span class="label">tier one &middot; read every time</span>
+        <span class="what">The name and description of every skill on offer.</span>
+        <span class="how">Skill::summary &middot; prompt</span>
+      </li>
+      <li style="--depth: 1">
+        <span class="label">tier two &middot; after the choice</span>
+        <span class="what">The body of the one skill the model picked.</span>
+        <span class="how">Skill::body</span>
+      </li>
+      <li style="--depth: 2">
+        <span class="label">tier three &middot; when the work reaches it</span>
+        <span class="what">One file that body points at, read on demand.</span>
+        <span class="how">Skill::resolve &rarr; Source::read</span>
+      </li>
+    </ol>
+    <p><code>Skill::resolve</code> joins the skill root and refuses a path that climbs out of it, so a document can point at its own files and nowhere else.</p>
   </section>
 
-  <section class="entry" id="tiers" data-section data-label="03 the three tiers">
-    <div class="rail"><span class="num">03</span><span>The three tiers</span></div>
-    <div class="body">
-      <h2>What a model sees, and when</h2>
-      <p>The specification loads a skill in three steps. Each one has a shape in this library, and nothing is read twice or read early.</p>
-      <table class="tiers">
-        <caption class="sr-only">The three tiers of a skill and the API that reads each</caption>
-        <thead>
-          <tr><th scope="col">Tier</th><th scope="col">What is read</th><th scope="col">How</th></tr>
-        </thead>
-        <tbody>
-          <tr><th scope="row">1</th><td>Name and description of every skill on offer</td><td><code>Skill::summary</code>, <code>prompt</code></td></tr>
-          <tr><th scope="row">2</th><td>The body of the one skill that was chosen</td><td><code>Skill::body</code></td></tr>
-          <tr><th scope="row">3</th><td>One file that body points at, when the work reaches it</td><td><code>Skill::resolve</code> then <code>Source::read</code></td></tr>
-        </tbody>
-      </table>
-      <p><code>Skill::resolve</code> joins the skill root and refuses a path that climbs out of it, so a document can point at its own files and nowhere else. The document itself is read the same way as any other file.</p>
-    </div>
-  </section>
+  <section class="section" id="screening" data-section data-label="screening">
+    <h2 class="sec"><span class="n">04</span><span class="t">screening</span><span class="of">of 06</span></h2>
+    <p class="lede">Paste a résumé. The desk below is the library, compiled to JavaScript — it parses and validates as you type, and every tag and sentence in the margin is the one the MoonBit side produces.</p>
 
-  <section class="entry" id="screening" data-section data-label="04 screening">
-    <div class="rail"><span class="num">04</span><span>Screening</span></div>
-    <div class="body">
-      <h2>Paste a résumé</h2>
-      <p class="lede">The desk below is the library, compiled to JavaScript. It parses and validates as you type; every tag and every sentence in the right-hand column is the one the MoonBit side produces.</p>
-
-      <div class="desk" data-screening data-root="pdf-tools" data-compact>
-        <div class="desk-head">
-          <span>screening</span>
-          <label class="root-label">in directory <input class="root" value="pdf-tools" spellcheck="false" autocapitalize="off" aria-label="Directory name"></label>
-          <span class="state" data-clean="true">accepted</span>
-        </div>
-        <div class="desk-grid">
-          <div class="pane">
-            <textarea spellcheck="false" aria-label="The SKILL.md document">---
+    <div class="form" data-screening data-root="pdf-tools">
+      <div class="form-head">
+        <span>application</span>
+        <label class="root-label">in directory <input class="root" value="pdf-tools" spellcheck="false" autocapitalize="off" aria-label="Directory name"></label>
+        <span class="state" data-clean="true">accepted</span>
+      </div>
+      <div class="form-grid">
+        <div class="pane pane-doc">
+          <textarea spellcheck="false" aria-label="The SKILL.md document">---
 name: pdf-tools
 description: Extract text from PDFs. Use when a task hands you a PDF.
 ---
@@ -137,65 +164,53 @@ description: Extract text from PDFs. Use when a task hands you a PDF.
 Run scripts/extract.py on the file. The script writes the text to
 stdout, one page per line.
 </textarea>
-          </div>
-          <div class="pane">
-            <ul class="verdicts" aria-live="polite" aria-label="Verdicts"></ul>
-          </div>
         </div>
-        <div class="desk-read"><span>tier 1</span><code class="read-line"></code></div>
-        <div class="desk-foot">
-          <button class="chip" type="button" data-case="valid-minimal">an accepted one</button>
-          <button class="chip" type="button" data-case="name-upper">name in capitals</button>
-          <button class="chip" type="button" data-case="no-frontmatter">no frontmatter</button>
-          <button class="chip" type="button" data-case="desc-1025">description too long</button>
-          <a class="chip" href="screening.html">more</a>
+        <div class="pane">
+          <ul class="verdicts" aria-live="polite" aria-label="Verdicts"></ul>
+          <div class="form-stamp"><span class="stamp">accepted<em>0 faults</em></span></div>
         </div>
       </div>
-      <p>The directory name matters: the specification wants it to equal <code>name</code>, so a document that is perfect on its own can still be wrong in the folder it sits in. Change the field above to see that fault appear and go.</p>
+      <div class="form-foot">
+        <button class="chip" type="button" data-case="valid-minimal">an accepted one</button>
+        <button class="chip" type="button" data-case="name-upper">name in capitals</button>
+        <button class="chip" type="button" data-case="no-frontmatter">no frontmatter</button>
+        <button class="chip" type="button" data-case="desc-1025">description too long</button>
+        <a class="chip" href="screening.html">more</a>
+      </div>
     </div>
+    <p>The directory name matters: the specification wants it to equal <code>name</code>, so a document that is perfect on its own can still be wrong in the folder it sits in.</p>
   </section>
 
-  <section class="entry" id="numbers" data-section data-label="05 in numbers">
-    <div class="rail"><span class="num">05</span><span>In numbers</span></div>
-    <div class="body">
-      <h2>What the surface comes to</h2>
-      <ul class="figures">
-        <li><span class="n" data-count="packages">2</span><span class="k">packages: the document, and the directory</span></li>
-        <li><span class="n" data-count="fields">6</span><span class="k">header fields the specification defines</span></li>
-        <li><span class="n" data-count="faults">18</span><span class="k">fault tags a report can be filed under</span></li>
-      </ul>
-    </div>
+  <section class="section" id="numbers" data-section data-label="in numbers">
+    <h2 class="sec"><span class="n">05</span><span class="t">in numbers</span><span class="of">of 06</span></h2>
+    <dl class="figures">
+      <div class="figure"><dt>packages: the document and the directory</dt><span class="dots"></span><dd data-count="packages">2</dd></div>
+      <div class="figure"><dt>header fields the specification defines</dt><span class="dots"></span><dd data-count="fields">6</dd></div>
+      <div class="figure"><dt>tags a verdict can be filed under</dt><span class="dots"></span><dd data-count="faults">18</dd></div>
+    </dl>
   </section>
 
-  <section class="entry" id="elsewhere" data-section data-label="06 elsewhere">
-    <div class="rail"><span class="num">06</span><span>Elsewhere</span></div>
-    <div class="body">
-      <h2>Where to go next</h2>
-      <ul class="refs">
-        <li><a class="who" href="guide.html">Guide</a><span class="what">The library in eight steps, from the first parse to a directory checked from a shell.</span></li>
-        <li><a class="who" href="api.html">API</a><span class="what">Every public item of both packages, with the signature it has in this version.</span></li>
-        <li><a class="who" href="screening.html">Screening</a><span class="what">The corpus this library is tested against, a larger desk, and what each fault tag means.</span></li>
-        <li><a class="who" href="https://mooncakes.io/docs/moonbitstack/moonskill">mooncakes</a><span class="what">The package itself, for the version this page describes.</span></li>
-      </ul>
-    </div>
+  <section class="section" id="elsewhere" data-section data-label="elsewhere">
+    <h2 class="sec"><span class="n">06</span><span class="t">elsewhere</span><span class="of">of 06</span></h2>
+    <ul class="refs">
+      <li><a class="who" href="guide.html">guide</a><span class="what">The library in eight steps, from the first parse to a directory checked from a shell.</span></li>
+      <li><a class="who" href="api.html">api</a><span class="what">Every public item of both packages, with the signature it has in this version.</span></li>
+      <li><a class="who" href="screening.html">screening</a><span class="what">The corpus this library is judged against, a larger desk, and what each tag means.</span></li>
+      <li><a class="who" href="https://mooncakes.io/docs/moonbitstack/moonskill">mooncakes</a><span class="what">The package itself, for the version this page describes.</span></li>
+    </ul>
   </section>
+
+  <footer class="foot">
+    <span class="signature">moonskill</span>
+    <span class="small">
+      page 1 of 1 &middot; <a href="https://github.com/moonbitstack/moonskill/blob/master/LICENSE">Apache-2.0</a><br>
+      <a href="https://github.com/moonbitstack/moonskill">github.com/moonbitstack/moonskill</a>
+    </span>
+  </footer>
 
 </main>
 
-<footer>
-  <span>moonskill</span>
-  <span class="right">
-    <a href="https://github.com/moonbitstack/moonskill/blob/master/LICENSE">Apache-2.0</a>
-    <a href="https://github.com/moonbitstack/moonskill">source</a>
-    <a href="https://mooncakes.io/docs/moonbitstack/moonskill">mooncakes</a>
-  </span>
-</footer>
-
-<div class="edge" aria-hidden="true">
-  <div class="edge-line"></div>
-  <div class="edge-marks"></div>
-  <div class="edge-thumb"></div>
-</div>
+<nav class="index" aria-label="Sections"></nav>
 
 <script type="module" src="site.js"></script>
 <script type="module" src="screening.js"></script>

@@ -61,7 +61,7 @@ def rewrite(text, values):
         if key == "version":
             continue
         text = re.sub(
-            rf'(<span class="n" data-count="{key}">)[^<]*(</span>)',
+            rf'(<dd data-count="{key}">)[^<]*(</dd>)',
             lambda m, n=number: f"{m.group(1)}{n}{m.group(2)}",
             text,
         )

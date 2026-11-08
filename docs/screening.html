@@ -17,48 +17,52 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="masthead">
-  <div class="wrap">
-    <a class="mark" href="index.html">moonskill</a>
-    <nav class="nav" aria-label="Pages">
-      <a href="index.html">home</a>
-      <a href="guide.html">guide</a>
-      <a href="api.html">api</a>
-      <a href="screening.html" aria-current="page">screening</a>
-      <a href="https://github.com/moonbitstack/moonskill">github</a>
-    </nav>
-    <button class="theme" type="button" data-theme-toggle>paper</button>
-  </div>
-</header>
-
 <main class="sheet">
 
-  <section class="hero">
-    <p class="eyebrow">Screening &middot; the desk</p>
-    <h1>A résumé in, a list of reasons out.<em>The reader never guesses what a document meant.</em></h1>
-    <p class="standfirst">Everything on this page is the library compiled to JavaScript. It reads the document you type, judges it against the specification, and returns the tags and sentences the MoonBit side would return.</p>
-  </section>
+  <nav class="tabs" aria-label="Pages">
+    <a class="tab" href="index.html">home</a>
+    <a class="tab" href="guide.html">guide</a>
+    <a class="tab" href="api.html">api</a>
+    <a class="tab" href="screening.html" aria-current="page">screening</a>
+  </nav>
 
-  <section class="entry" id="desk" data-section data-label="01 the desk">
-    <div class="rail"><span class="num">01</span><span>The desk</span></div>
-    <div class="body">
-      <h2>Edit, and watch the verdicts move</h2>
-      <p>Uppercase a letter in <code>name</code>, add a hyphen at the end, make the description longer than 1024 characters, or change the directory below — each one has its own tag. A document that does not parse at all comes back as one <code>malformed</code> fault, which is what keeps a batch check running.</p>
+  <div class="docline">
+    <span class="ref">moonbitstack</span>
+    <span>screening</span>
+    <span>the desk</span>
+    <span class="right">
+      <span>sc&ndash;03</span>
+      <a href="https://github.com/moonbitstack/moonskill">github</a>
+      <button class="theme" type="button" data-theme-toggle>paper</button>
+    </span>
+  </div>
 
-      <div class="desk" data-screening data-root="pdf-tools">
-        <div class="desk-head">
-          <span>screening</span>
-          <label class="root-label">in directory <input class="root" value="pdf-tools" spellcheck="false" autocapitalize="off" aria-label="Directory name"></label>
-          <span class="state" data-clean="true">accepted</span>
-        </div>
-        <div class="desk-grid">
-          <div class="pane">
-            <textarea spellcheck="false" aria-label="The SKILL.md document">---
+  <div class="masthead masthead--sub">
+    <div>
+      <h1>screening</h1>
+      <p class="role">A résumé in, a list of reasons out. The reader never guesses what a document meant.</p>
+    </div>
+  </div>
+
+  <section class="section" id="desk" data-section data-label="the desk">
+    <h2 class="sec"><span class="n">01</span><span class="t">the desk</span><span class="of">of 04</span></h2>
+    <p class="lede">Everything on this page is the library compiled to JavaScript. It reads the document you type and returns the tags and sentences the MoonBit side would return.</p>
+    <p>Uppercase a letter in <code>name</code>, add a hyphen at the end, push the description past 1024 characters, or change the directory — each one has its own tag. A document that does not parse at all comes back as one <code>malformed</code> fault, which is what keeps a batch check running.</p>
+
+    <div class="form" data-screening data-root="pdf-tools">
+      <div class="form-head">
+        <span>application</span>
+        <label class="root-label">in directory <input class="root" value="pdf-tools" spellcheck="false" autocapitalize="off" aria-label="Directory name"></label>
+        <span class="state" data-clean="true">accepted</span>
+      </div>
+      <div class="form-grid">
+        <div class="pane pane-doc">
+          <textarea spellcheck="false" aria-label="The SKILL.md document">---
 name: pdf-tools
 description: Extract text from PDFs. Use when a task hands you a PDF.
 ---
@@ -68,97 +72,90 @@ description: Extract text from PDFs. Use when a task hands you a PDF.
 Run scripts/extract.py on the file. The script writes the text to
 stdout, one page per line.
 </textarea>
-          </div>
-          <div class="pane">
-            <ul class="verdicts" aria-live="polite" aria-label="Verdicts"></ul>
-          </div>
         </div>
-        <div class="desk-read"><span>tier 1</span><code class="read-line"></code></div>
-        <div class="desk-foot">
-          <button class="chip" type="button" data-reset>back to the first document</button>
-          <button class="chip" type="button" data-case="name-upper">name in capitals</button>
-          <button class="chip" type="button" data-case="name-trailing-">hyphen at the end</button>
-          <button class="chip" type="button" data-case="bad-yaml">yaml that does not read</button>
+        <div class="pane">
+          <ul class="verdicts" aria-live="polite" aria-label="Verdicts"></ul>
+          <div class="form-stamp"><span class="stamp">accepted<em>0 faults</em></span></div>
         </div>
+      </div>
+      <div class="form-foot">
+        <button class="chip" type="button" data-reset>back to the first document</button>
+        <button class="chip" type="button" data-case="name-upper">name in capitals</button>
+        <button class="chip" type="button" data-case="name-trailing-">hyphen at the end</button>
+        <button class="chip" type="button" data-case="bad-yaml">yaml that does not read</button>
       </div>
     </div>
   </section>
 
-  <section class="entry" id="corpus" data-section data-label="02 the corpus">
-    <div class="rail"><span class="num">02</span><span>The corpus</span></div>
-    <div class="body">
-      <h2>One directory per rule, both directions</h2>
-      <p>These are the documents this library is judged against: for every rule, one directory that meets it and one that breaks it, plus the shapes that make a document refuse to parse. The counts beside them are this page running each one through the same checker as the desk above. Pick any of them to load it.</p>
-      <p>One case of the corpus is missing here on purpose: the directory that holds no document at all. A desk that is handed text cannot see a file that is not there, so that case is judged by the tree reader instead.</p>
-      <div class="corpus" data-corpus></div>
-    </div>
+  <section class="section" id="corpus" data-section data-label="the corpus">
+    <h2 class="sec"><span class="n">02</span><span class="t">the corpus</span><span class="of">of 04</span></h2>
+    <p class="lede">One directory per rule, in both directions.</p>
+    <p>These are the documents this library is judged against: for every rule, one directory that meets it and one that breaks it, plus the shapes that make a document refuse to parse. The counts beside them are this page running each one through the same checker as the desk above. Pick any of them to load it.</p>
+    <div class="corpus" data-corpus></div>
+    <p>One case of the corpus is missing here on purpose: the directory that holds no document at all. A desk that is handed text cannot see a file that is not there, so that case is judged by the tree reader instead.</p>
   </section>
 
-  <section class="entry" id="tags" data-section data-label="03 the tags">
-    <div class="rail"><span class="num">03</span><span>The tags</span></div>
-    <div class="body">
-      <h2>What a report can say</h2>
-      <p>A fault has two faces: a tag that a program matches on, and a sentence a person reads. The tag is the stable one.</p>
-      <table>
-        <caption class="sr-only">Fault tags and when each one is reported</caption>
-        <thead><tr><th scope="col">Tag</th><th scope="col">Reported when</th></tr></thead>
-        <tbody>
-          <tr><td><code>unexpected-fields</code></td><td>The header holds keys the specification does not define.</td></tr>
-          <tr><td><code>missing-name</code></td><td>There is no <code>name</code>.</td></tr>
-          <tr><td><code>name-empty</code></td><td><code>name</code> is empty, blank, or not text.</td></tr>
-          <tr><td><code>name-too-long</code></td><td><code>name</code> is past 64 characters.</td></tr>
-          <tr><td><code>name-not-lowercase</code></td><td><code>name</code> has an uppercase letter.</td></tr>
-          <tr><td><code>name-edge-hyphen</code></td><td><code>name</code> starts or ends with a hyphen.</td></tr>
-          <tr><td><code>name-double-hyphen</code></td><td><code>name</code> has two hyphens in a row.</td></tr>
-          <tr><td><code>name-bad-character</code></td><td><code>name</code> has a character that is neither a letter, a digit, nor a hyphen.</td></tr>
-          <tr><td><code>name-mismatch</code></td><td>The directory and <code>name</code> differ after Unicode composition.</td></tr>
-          <tr><td><code>missing-description</code></td><td>There is no <code>description</code>.</td></tr>
-          <tr><td><code>description-empty</code></td><td><code>description</code> is empty or blank.</td></tr>
-          <tr><td><code>description-too-long</code></td><td><code>description</code> is past 1024 characters.</td></tr>
-          <tr><td><code>compatibility-not-text</code></td><td><code>compatibility</code> is present but not text.</td></tr>
-          <tr><td><code>compatibility-too-long</code></td><td><code>compatibility</code> is past 500 characters.</td></tr>
-          <tr><td><code>malformed</code></td><td>The document does not parse; the refusal is carried inside the fault.</td></tr>
-          <tr><td><code>missing-path</code></td><td>A directory that was named does not exist.</td></tr>
-          <tr><td><code>not-a-directory</code></td><td>The path is a file, not a skill directory.</td></tr>
-          <tr><td><code>missing-document</code></td><td>The directory holds no <code>SKILL.md</code> and no <code>skill.md</code>.</td></tr>
-        </tbody>
-      </table>
-    </div>
+  <section class="section" id="tags" data-section data-label="the tags">
+    <h2 class="sec"><span class="n">03</span><span class="t">the tags</span><span class="of">of 04</span></h2>
+    <p class="lede">A fault has two faces: a tag a program matches on, and a sentence a person reads.</p>
+    <table>
+      <caption class="sr-only">Fault tags and when each one is reported</caption>
+      <thead><tr><th scope="col">Tag</th><th scope="col">Reported when</th></tr></thead>
+      <tbody>
+        <tr><td><code>unexpected-fields</code></td><td>The header holds keys the specification does not define.</td></tr>
+        <tr><td><code>missing-name</code></td><td>There is no <code>name</code>.</td></tr>
+        <tr><td><code>name-empty</code></td><td><code>name</code> is empty, blank, or not text.</td></tr>
+        <tr><td><code>name-too-long</code></td><td><code>name</code> is past 64 characters.</td></tr>
+        <tr><td><code>name-not-lowercase</code></td><td><code>name</code> has an uppercase letter.</td></tr>
+        <tr><td><code>name-edge-hyphen</code></td><td><code>name</code> starts or ends with a hyphen.</td></tr>
+        <tr><td><code>name-double-hyphen</code></td><td><code>name</code> has two hyphens in a row.</td></tr>
+        <tr><td><code>name-bad-character</code></td><td><code>name</code> has a character that is neither a letter, a digit, nor a hyphen.</td></tr>
+        <tr><td><code>name-mismatch</code></td><td>The directory and <code>name</code> differ after Unicode composition.</td></tr>
+        <tr><td><code>missing-description</code></td><td>There is no <code>description</code>.</td></tr>
+        <tr><td><code>description-empty</code></td><td><code>description</code> is empty or blank.</td></tr>
+        <tr><td><code>description-too-long</code></td><td><code>description</code> is past 1024 characters.</td></tr>
+        <tr><td><code>compatibility-not-text</code></td><td><code>compatibility</code> is present but not text.</td></tr>
+        <tr><td><code>compatibility-too-long</code></td><td><code>compatibility</code> is past 500 characters.</td></tr>
+        <tr><td><code>malformed</code></td><td>The document does not parse; the refusal is carried inside the fault.</td></tr>
+        <tr><td><code>missing-path</code></td><td>A directory that was named does not exist.</td></tr>
+        <tr><td><code>not-a-directory</code></td><td>The path is a file, not a skill directory.</td></tr>
+        <tr><td><code>missing-document</code></td><td>The directory holds no <code>SKILL.md</code> and no <code>skill.md</code>.</td></tr>
+      </tbody>
+    </table>
   </section>
 
-  <section class="entry" id="engine" data-section data-label="04 how it runs">
-    <div class="rail"><span class="num">04</span><span>How it runs</span></div>
-    <div class="body">
-      <h2>The page is a client</h2>
-      <p>The desk imports <code>engine/moonskill.js</code>, which is this library compiled for JavaScript with one function added: <code>screen(text, root)</code>, which calls <code>parse</code>, <code>validate</code> and <code>Skill::summary</code> and returns their answer as JSON. No rule is written twice. If you change <code>validate</code> and rebuild, this page changes with it.</p>
-      <p>The corpus above is the same idea: each directory is read from the repository and judged here, so the counts are not typed into the page.</p>
-      <div class="code">
-        <div class="code-head"><span>the only glue</span><button class="copy" type="button">copy</button></div>
-        <pre data-lang="mbt" data-nocheck>pub fn screen(text : String, root : String) -&gt; String {
+  <section class="section" id="engine" data-section data-label="how it runs">
+    <h2 class="sec"><span class="n">04</span><span class="t">how it runs</span><span class="of">of 04</span></h2>
+    <p class="lede">The page is a client, and the glue is one function.</p>
+    <p>The desk imports <code>engine/moonskill.js</code>, which is this library compiled for JavaScript with one function added: <code>screen(text, root)</code>, which calls <code>parse</code>, <code>validate</code> and <code>Skill::summary</code> and returns their answer as JSON. No rule is written twice. If you change <code>validate</code> and rebuild, this page changes with it.</p>
+    <p>The corpus above is the same idea: each directory is read from the repository and judged here, so the counts are not typed into the page.</p>
+    <div class="entry">
+      <div class="meta"><b>screen</b>text &rarr; json<br>browser glue</div>
+      <div>
+        <h3>The only glue</h3>
+        <div class="code">
+          <div class="code-head"><span>moonbit, abridged</span><button class="copy" type="button">copy</button></div>
+          <pre data-lang="mbt" data-nocheck>pub fn screen(text : String, root : String) -&gt; String {
   let skill = @moonskill.parse(text, root=root)
   let faults = @moonskill.validate(skill)
   // …the name, the summary, the location and the faults, as JSON
 }</pre>
+        </div>
       </div>
     </div>
   </section>
 
+  <footer class="foot">
+    <span class="signature">moonskill</span>
+    <span class="small">
+      screening &middot; the whole corpus<br>
+      <a href="index.html">back to the sheet</a>
+    </span>
+  </footer>
+
 </main>
 
-<footer>
-  <span>moonskill &middot; screening</span>
-  <span class="right">
-    <a href="index.html">home</a>
-    <a href="guide.html">guide</a>
-    <a href="https://github.com/moonbitstack/moonskill">source</a>
-  </span>
-</footer>
-
-<div class="edge" aria-hidden="true">
-  <div class="edge-line"></div>
-  <div class="edge-marks"></div>
-  <div class="edge-thumb"></div>
-</div>
+<nav class="index" aria-label="Sections"></nav>
 
 <script type="module" src="site.js"></script>
 <script type="module" src="screening.js"></script>

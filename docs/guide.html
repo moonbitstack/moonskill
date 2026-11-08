@@ -17,58 +17,65 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="masthead">
-  <div class="wrap">
-    <a class="mark" href="index.html">moonskill</a>
-    <nav class="nav" aria-label="Pages">
-      <a href="index.html">home</a>
-      <a href="guide.html" aria-current="page">guide</a>
-      <a href="api.html">api</a>
-      <a href="screening.html">screening</a>
-      <a href="https://github.com/moonbitstack/moonskill">github</a>
-    </nav>
-    <button class="theme" type="button" data-theme-toggle>paper</button>
-  </div>
-</header>
-
 <main class="sheet">
 
-  <section class="hero">
-    <p class="eyebrow">Guide &middot; eight steps</p>
-    <h1>From a document to a shortlist.<em>Nothing here needs an agent to try it.</em></h1>
-    <p class="standfirst">Each step is a program that runs: the blocks below are checked against this version, and the output under them is what they print.</p>
-  </section>
+  <nav class="tabs" aria-label="Pages">
+    <a class="tab" href="index.html">home</a>
+    <a class="tab" href="guide.html" aria-current="page">guide</a>
+    <a class="tab" href="api.html">api</a>
+    <a class="tab" href="screening.html">screening</a>
+  </nav>
 
-  <section class="entry" id="install" data-section data-label="01 install">
-    <div class="rail"><span class="num">01</span><span>Install</span></div>
-    <div class="body">
-      <h2>Add the package</h2>
-      <div class="code">
+  <div class="docline">
+    <span class="ref">moonbitstack</span>
+    <span>guide</span>
+    <span>eight steps</span>
+    <span class="right">
+      <span>gv&ndash;02</span>
+      <a href="https://github.com/moonbitstack/moonskill">github</a>
+      <button class="theme" type="button" data-theme-toggle>paper</button>
+    </span>
+  </div>
+
+  <div class="masthead masthead--sub">
+    <div>
+      <h1>reading a skill</h1>
+      <p class="role">Eight programs, each of which compiles and prints the result under it.</p>
+    </div>
+  </div>
+
+  <section class="section" id="install" data-section data-label="install">
+    <h2 class="sec"><span class="n">01</span><span class="t">install</span><span class="of">of 08</span></h2>
+
+    <p class="lede">One package, or two if you want the directory reader as well.</p>
+    <div class="code">
         <div class="code-head"><span>shell</span><button class="copy" type="button">copy</button></div>
         <pre data-lang="sh">moon add moonbitstack/moonskill</pre>
       </div>
-      <p>Two packages come with it: <code>moonbitstack/moonskill</code>, which reads text, and <code>moonbitstack/moonskill/fs</code>, which reads directories on the native target.</p>
-      <div class="code">
+      
+    <p><code>moonbitstack/moonskill</code> reads text and never touches a file. <code>moonbitstack/moonskill/fs</code> is the reader that does — it is there on the native target only.</p>
+    <div class="code">
         <div class="code-head"><span>moon.pkg</span><button class="copy" type="button">copy</button></div>
         <pre data-lang="toml">import {
   "moonbitstack/moonskill",
   "moonbitstack/moonskill/fs",
 }</pre>
       </div>
-    </div>
+    
+
   </section>
 
-  <section class="entry" id="read" data-section data-label="02 read">
-    <div class="rail"><span class="num">02</span><span>Read a document</span></div>
-    <div class="body">
-      <h2>The header, then the body</h2>
-      <p>A skill begins with a <code>---</code> fence, a YAML mapping, and a second fence. <code>parse</code> returns the three things a client uses: the name, the description and the Markdown below the fence. <code>root</code> is the directory the document was found in — passing it is what lets the checker compare the two later.</p>
-      <div class="code">
+  <section class="section" id="read" data-section data-label="read a document">
+    <h2 class="sec"><span class="n">02</span><span class="t">read a document</span><span class="of">of 08</span></h2>
+
+    <p class="lede">A skill begins with a fence, a YAML mapping, and a second fence.</p>
+    <p><code>parse</code> returns the three things a client uses: the name, the description and the Markdown below the fence. <code>root</code> is the directory the document was found in — passing it is what lets the checker compare the two later.</p>
+    <div class="code">
         <div class="code-head"><span>moonbit</span><button class="copy" type="button">copy</button></div>
         <pre data-lang="mbt">test {
   let text =
@@ -83,31 +90,37 @@
 }</pre>
         <pre class="out">pdf-tools: Extract text from PDFs.</pre>
       </div>
-      <p><code>summary</code> is the tier-1 line: the name and the description, joined so a list of them stays a list. <code>location</code> is where the document sits, which is what a client hands back to a model that asked for the body.</p>
+      
+    <p><code>summary</code> is the tier-1 line: the name and the description, joined so a list of them stays a list. <code>location</code> is where the document sits, which is what a client hands back to a model that asked for the body.</p>
 
-      <h3>What parsing refuses</h3>
-      <p>Parsing is lenient about fields and strict about shape. Missing <code>name</code> still parses — <code>validate</code> is what reports it — but a document that is not a skill document at all is refused, and the refusal is a value you can match on.</p>
-      <table>
-        <caption class="sr-only">The six refusals</caption>
-        <thead><tr><th scope="col">Refusal</th><th scope="col">When</th></tr></thead>
-        <tbody>
-          <tr><td><code>MissingFrontmatter</code></td><td>The text does not open with <code>---</code>.</td></tr>
-          <tr><td><code>UnclosedFrontmatter</code></td><td>The opening fence has no closing one.</td></tr>
-          <tr><td><code>BadYaml</code></td><td>The frontmatter is not YAML the strict reader accepts; the message begins with the line and column.</td></tr>
-          <tr><td><code>NotAMapping</code></td><td>The frontmatter is YAML, but a list or a scalar rather than a mapping.</td></tr>
-          <tr><td><code>NotUtf8</code></td><td>The bytes are not UTF-8; the offset is where decoding stopped.</td></tr>
-          <tr><td><code>NoDocument</code></td><td>A directory offered as a skill holds neither <code>SKILL.md</code> nor <code>skill.md</code>.</td></tr>
-        </tbody>
-      </table>
+    <div class="entry">
+      <div class="meta"><b>refused</b>not a skill document<br>six ways</div>
+      <div>
+        <h3>What parsing will not read</h3>
+        <p>Parsing is lenient about fields and strict about shape. A missing <code>name</code> still parses — <code>validate</code> reports it — but a document that is not a skill document at all is refused, and the refusal is a value you can match on.</p>
+        <table>
+          <caption class="sr-only">The six refusals</caption>
+          <thead><tr><th scope="col">Refusal</th><th scope="col">When</th></tr></thead>
+          <tbody>
+            <tr><td><code>MissingFrontmatter</code></td><td>The text does not open with <code>---</code>.</td></tr>
+            <tr><td><code>UnclosedFrontmatter</code></td><td>The opening fence has no closing one.</td></tr>
+            <tr><td><code>BadYaml</code></td><td>The frontmatter is not YAML the strict reader accepts; the message begins with the line and column.</td></tr>
+            <tr><td><code>NotAMapping</code></td><td>The frontmatter is YAML, but a list or a scalar rather than a mapping.</td></tr>
+            <tr><td><code>NotUtf8</code></td><td>The bytes are not UTF-8; the offset is where decoding stopped.</td></tr>
+            <tr><td><code>NoDocument</code></td><td>A directory offered as a skill holds neither <code>SKILL.md</code> nor <code>skill.md</code>.</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+
   </section>
 
-  <section class="entry" id="judge" data-section data-label="03 judge">
-    <div class="rail"><span class="num">03</span><span>Judge it</span></div>
-    <div class="body">
-      <h2>Every fault, in one pass</h2>
-      <p><code>faults</code> parses and validates in one call and returns a list rather than stopping at the first problem, because a person fixing a document wants the whole list. A document that does not parse comes back as one fault of kind <code>malformed</code>, which is what lets a batch be checked without a single bad file ending the run.</p>
-      <div class="code">
+  <section class="section" id="judge" data-section data-label="judge it">
+    <h2 class="sec"><span class="n">03</span><span class="t">judge it</span><span class="of">of 08</span></h2>
+
+    <p class="lede">Every fault, in one pass, because a person fixing a document wants the list.</p>
+    <p>A document that does not parse comes back as one fault of kind <code>malformed</code>, which is what lets a batch be checked without a single bad file ending the run.</p>
+    <div class="code">
         <div class="code-head"><span>moonbit</span><button class="copy" type="button">copy</button></div>
         <pre data-lang="mbt">test {
   let text =
@@ -125,16 +138,17 @@
 name-bad-character: Skill name 'PDF_Tools' contains invalid characters. Only letters, digits, and hyphens are allowed.
 name-mismatch: Directory name 'pdf-tools' must match skill name 'PDF_Tools'</pre>
       </div>
-      <p><code>kind</code> is the tag a report is filed under and does not change with the wording; <code>message</code> is the sentence for a person. The order is the order a reader meets the document: fields that do not belong, the name, the description, then <code>compatibility</code>.</p>
-    </div>
+      
+    <p><code>kind</code> is the tag a report is filed under and does not change with the wording; <code>message</code> is the sentence for a person. The order is the order a reader meets the document: fields that do not belong, the name, the description, then <code>compatibility</code>.</p>
+
   </section>
 
-  <section class="entry" id="tiers" data-section data-label="04 the three tiers">
-    <div class="rail"><span class="num">04</span><span>The three tiers</span></div>
-    <div class="body">
-      <h2>Body first, files later</h2>
-      <p>The body is already in the <code>Skill</code> you parsed: no second read, no file opened. The files it points at are a different matter, and <code>resolve</code> is the gate — it joins the root and refuses anything that would climb out of the skill.</p>
-      <div class="code">
+  <section class="section" id="tiers" data-section data-label="the three tiers">
+    <h2 class="sec"><span class="n">04</span><span class="t">the three tiers</span><span class="of">of 08</span></h2>
+
+    <p class="lede">The body is already in the skill you parsed. The files it points at are not.</p>
+    <p><code>resolve</code> joins the root and refuses anything that would climb out of the skill, so a document can point at its own files and nowhere else.</p>
+    <div class="code">
         <div class="code-head"><span>moonbit</span><button class="copy" type="button">copy</button></div>
         <pre data-lang="mbt">test {
   let text =
@@ -149,8 +163,9 @@ name-mismatch: Directory name 'pdf-tools' must match skill name 'PDF_Tools'</pre
   assert_eq(skill.resolve("/etc/passwd"), None)
 }</pre>
       </div>
-      <p>Reading the file itself is the source's job. With <code>@fs.Dir</code> that is one call:</p>
-      <div class="code">
+      
+    <p>Reading the file itself is the source's job; with a directory reader that is one call.</p>
+    <div class="code">
         <div class="code-head"><span>moonbit, native</span><button class="copy" type="button">copy</button></div>
         <pre data-lang="mbt" data-target="native">async test {
   let tree = @fs.Dir::at("docs/skills")
@@ -161,15 +176,16 @@ name-mismatch: Directory name 'pdf-tools' must match skill name 'PDF_Tools'</pre
   }
 }</pre>
       </div>
-    </div>
+    
+
   </section>
 
-  <section class="entry" id="discover" data-section data-label="05 discover">
-    <div class="rail"><span class="num">05</span><span>Discover a tree</span></div>
-    <div class="body">
-      <h2>A source, not a filesystem</h2>
-      <p><code>discover</code> asks a <code>Source</code> which skill roots it offers and reads each one. The trait is two methods, so skills kept in a tarball, a database or an HTTP cache need no change above the trait.</p>
-      <div class="code">
+  <section class="section" id="discover" data-section data-label="discover a tree">
+    <h2 class="sec"><span class="n">05</span><span class="t">discover a tree</span><span class="of">of 08</span></h2>
+
+    <p class="lede">A source, not a filesystem.</p>
+    <p><code>discover</code> asks a <code>Source</code> which skill roots it offers and reads each one. The trait is two methods, so skills kept in a tarball, a database or an HTTP cache need no change above it.</p>
+    <div class="code">
         <div class="code-head"><span>moonbit, native</span><button class="copy" type="button">copy</button></div>
         <pre data-lang="mbt" data-target="native">async test {
   let tree = @fs.Dir::at("docs/skills")
@@ -178,17 +194,18 @@ name-mismatch: Directory name 'pdf-tools' must match skill name 'PDF_Tools'</pre
   assert_eq(skills[0].name, "moonskill")
 }</pre>
       </div>
-      <p>A directory that is offered as a skill but has no document is refused rather than skipped. Offering a model a skill it cannot open is how an agent comes to invent a tool it does not have.</p>
-      <p>Writing a source of your own is two methods: <code>list</code> returns the roots, <code>read</code> returns the bytes of a path. Paths speak of <code>/</code> between segments whatever the platform uses, so one report reads the same everywhere.</p>
-    </div>
+      
+    <p>A directory offered as a skill but holding no document is refused rather than skipped: offering a model a skill it cannot open is how an agent comes to invent a tool it does not have.</p>
+    <p>Writing a source of your own is two methods: <code>list</code> returns the roots, <code>read</code> returns the bytes of a path. Paths speak of <code>/</code> between segments whatever the platform uses, so one report reads the same everywhere.</p>
+
   </section>
 
-  <section class="entry" id="prompt" data-section data-label="06 prompt">
-    <div class="rail"><span class="num">06</span><span>Put the names in front</span></div>
-    <div class="body">
-      <h2>The block a model chooses from</h2>
-      <p><code>prompt</code> writes tier 1 as XML: one entry per skill, with the name, the description, and where the document is. A skill with an empty description still gets an entry — a model that cannot see the name cannot ask for the skill.</p>
-      <div class="code">
+  <section class="section" id="prompt" data-section data-label="the shortlist">
+    <h2 class="sec"><span class="n">06</span><span class="t">the shortlist</span><span class="of">of 08</span></h2>
+
+    <p class="lede">The block a model chooses from.</p>
+    <p><code>prompt</code> writes tier 1 as XML: one entry per skill, with the name, the description, and where the document is. A skill with an empty description still gets an entry — a model that cannot see the name cannot ask for the skill.</p>
+    <div class="code">
         <div class="code-head"><span>moonbit</span><button class="copy" type="button">copy</button></div>
         <pre data-lang="mbt">test {
   let text =
@@ -216,16 +233,16 @@ pdf-tools/SKILL.md
 &lt;/skill&gt;
 &lt;/available_skills&gt;</pre>
       </div>
-      <p>Descriptions are escaped, so a document that says <em>use when the task needs &lt;table&gt;</em> reads as text inside the block instead of closing an element early.</p>
-    </div>
+      
+
   </section>
 
-  <section class="entry" id="limits" data-section data-label="07 limits">
-    <div class="rail"><span class="num">07</span><span>Limits</span></div>
-    <div class="body">
-      <h2>A tighter budget</h2>
-      <p>The three lengths the specification fixes are a record, so a client with a smaller context can hold a skill to less without changing the document.</p>
-      <div class="code">
+  <section class="section" id="limits" data-section data-label="a tighter budget">
+    <h2 class="sec"><span class="n">07</span><span class="t">a tighter budget</span><span class="of">of 08</span></h2>
+
+    <p class="lede">A client with a smaller context can hold a skill to less.</p>
+    <p>The three lengths the specification fixes are a record, so the limits can be lowered without changing the document.</p>
+    <div class="code">
         <div class="code-head"><span>moonbit</span><button class="copy" type="button">copy</button></div>
         <pre data-lang="mbt">test {
   let text =
@@ -240,46 +257,44 @@ pdf-tools/SKILL.md
   assert_eq(faults[0].kind(), "description-too-long")
 }</pre>
       </div>
-      <p>The defaults are <code>@moonskill.limits</code>: 64 for the name, 1024 for the description, 500 for <code>compatibility</code>.</p>
-    </div>
+      
+    <p>The defaults are <code>@moonskill.limits</code>: 64 for the name, 1024 for the description, 500 for <code>compatibility</code>.</p>
+
   </section>
 
-  <section class="entry" id="shell" data-section data-label="08 from a shell">
-    <div class="rail"><span class="num">08</span><span>From a shell</span></div>
-    <div class="body">
-      <h2>One exit code per directory</h2>
-      <p><code>src/cmd/skillcheck</code> takes any number of directories, prints one line for each, and exits non-zero when anything failed.</p>
-      <div class="code">
+  <section class="section" id="shell" data-section data-label="from a shell">
+    <h2 class="sec"><span class="n">08</span><span class="t">from a shell</span><span class="of">of 08</span></h2>
+
+    <p class="lede">One exit code per directory.</p>
+    <p><code>src/cmd/skillcheck</code> takes any number of directories, prints one line for each, and exits non-zero when anything failed.</p>
+    <div class="code">
         <div class="code-head"><span>shell</span><button class="copy" type="button">copy</button></div>
         <pre data-lang="sh">moon run src/cmd/skillcheck --target native -- docs/skills/moonskill</pre>
         <pre class="out">ok    docs/skills/moonskill</pre>
       </div>
-      <div class="code">
+      
+    <div class="code">
         <div class="code-head"><span>shell</span><button class="copy" type="button">copy</button></div>
         <pre data-lang="sh">moon run src/cmd/skillcheck --target native -- broken/</pre>
         <pre class="out">FAIL  broken/
       - name-not-lowercase: Skill name 'Broken' must be lowercase</pre>
       </div>
-      <p><code>--json</code> prints one object per directory instead, which is what a program wants to read: <code>path</code>, <code>valid</code>, and the faults with their tags.</p>
-    </div>
+      
+    <p><code>--json</code> prints one object per directory instead, which is what a program wants to read: <code>path</code>, <code>valid</code>, and the faults with their tags.</p>
+
   </section>
+
+  <footer class="foot">
+    <span class="signature">moonskill</span>
+    <span class="small">
+      guide &middot; eight of eight<br>
+      <a href="index.html">back to the sheet</a>
+    </span>
+  </footer>
 
 </main>
 
-<footer>
-  <span>moonskill &middot; guide</span>
-  <span class="right">
-    <a href="index.html">home</a>
-    <a href="api.html">api</a>
-    <a href="https://github.com/moonbitstack/moonskill">source</a>
-  </span>
-</footer>
-
-<div class="edge" aria-hidden="true">
-  <div class="edge-line"></div>
-  <div class="edge-marks"></div>
-  <div class="edge-thumb"></div>
-</div>
+<nav class="index" aria-label="Sections"></nav>
 
 <script type="module" src="site.js"></script>
 </body>

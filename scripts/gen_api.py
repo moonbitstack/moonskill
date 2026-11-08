@@ -420,13 +420,10 @@ def render_package(rel, text, docs, index):
         groups.append("\n".join(chunk))
 
     body = f"""
-  <section class="entry" id="pkg-{anchor('root' if rel == '.' else rel)}" data-section data-label="{number} {html.escape(module)}">
-    <div class="rail"><span class="num">{number}</span><span>{html.escape(label)}</span></div>
-    <div class="body">
-      <h2>{html.escape(module)}</h2>
-      <p class="lede">{html.escape(blurb)}</p>
+  <section class="section" id="pkg-{anchor('root' if rel == '.' else rel)}" data-section data-label="{html.escape(label)}">
+    <h2 class="sec"><span class="n">{number}</span><span class="t">{html.escape(module)}</span><span class="of">of 02</span></h2>
+    <p class="lede">{html.escape(blurb)}</p>
 {chr(10).join(groups)}
-    </div>
   </section>"""
     return body, rendered
 
@@ -450,50 +447,50 @@ PAGE = """<!doctype html>
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="masthead">
-  <div class="wrap">
-    <a class="mark" href="index.html">moonskill</a>
-    <nav class="nav" aria-label="Pages">
-      <a href="index.html">home</a>
-      <a href="guide.html">guide</a>
-      <a href="api.html" aria-current="page">api</a>
-      <a href="screening.html">screening</a>
-      <a href="https://github.com/moonbitstack/moonskill">github</a>
-    </nav>
-    <button class="theme" type="button" data-theme-toggle>paper</button>
-  </div>
-</header>
-
 <main class="sheet">
 
-  <section class="hero">
-    <p class="eyebrow">API &middot; {count} public items</p>
-    <h1>Everything the module publishes.<em>Generated from the interfaces, not typed after them.</em></h1>
-    <p class="standfirst">Both packages, in the order the interface files list them. A signature here is the one the compiler sees; the sentence under it is the comment above the item in the source.</p>
-  </section>
+  <nav class="tabs" aria-label="Pages">
+    <a class="tab" href="index.html">home</a>
+    <a class="tab" href="guide.html">guide</a>
+    <a class="tab" href="api.html" aria-current="page">api</a>
+    <a class="tab" href="screening.html">screening</a>
+  </nav>
+
+  <div class="docline">
+    <span class="ref">moonbitstack</span>
+    <span>appendix</span>
+    <span>{count} public items</span>
+    <span class="right">
+      <span>ap&ndash;04</span>
+      <a href="https://github.com/moonbitstack/moonskill">github</a>
+      <button class="theme" type="button" data-theme-toggle>paper</button>
+    </span>
+  </div>
+
+  <div class="masthead masthead--sub">
+    <div>
+      <h1>the interface</h1>
+      <p class="role">Every public item, in the order the interface files list it. A signature here is the one the compiler sees.</p>
+    </div>
+  </div>
 {body}
+
+  <footer class="foot">
+    <span class="signature">moonskill</span>
+    <span class="small">
+      appendix &middot; generated from the interfaces<br>
+      <a href="index.html">back to the sheet</a>
+    </span>
+  </footer>
 
 </main>
 
-<footer>
-  <span>moonskill &middot; api</span>
-  <span class="right">
-    <a href="index.html">home</a>
-    <a href="guide.html">guide</a>
-    <a href="https://github.com/moonbitstack/moonskill">source</a>
-  </span>
-</footer>
-
-<div class="edge" aria-hidden="true">
-  <div class="edge-line"></div>
-  <div class="edge-marks"></div>
-  <div class="edge-thumb"></div>
-</div>
+<nav class="index" aria-label="Sections"></nav>
 
 <script type="module" src="site.js"></script>
 </body>

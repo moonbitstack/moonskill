@@ -1,8 +1,9 @@
 // Copyright 2026 Leo Cheng
 // SPDX-License-Identifier: Apache-2.0
 
-// Three things the pages share: the theme switch, the reading edge on the
-// right, and copy buttons. Nothing here knows what a skill is.
+// The sheet's three small behaviours: the theme switch, the section index that
+// stands in for a scrollbar, and copy buttons. Nothing here knows what a skill
+// is.
 
 const THEME_KEY = "moonskill:theme";
 
@@ -22,8 +23,8 @@ function paintTheme(theme) {
   } else {
     delete document.documentElement.dataset.theme;
   }
+  const now = currentTheme();
   for (const button of document.querySelectorAll("[data-theme-toggle]")) {
-    const now = currentTheme();
     button.textContent = now;
     button.setAttribute("aria-label", `Theme: ${now}. Switch theme.`);
     button.setAttribute("aria-pressed", String(now === "ink"));
@@ -58,51 +59,53 @@ function startTheme() {
   }
 }
 
-function startEdge() {
-  const edge = document.querySelector(".edge");
-  if (!edge) {
+function startIndex() {
+  const index = document.querySelector(".index");
+  if (!index) {
     return;
   }
-  const marks = edge.querySelector(".edge-marks");
-  const thumb = edge.querySelector(".edge-thumb");
   const sections = [...document.querySelectorAll("[data-section]")];
-  const root = document.documentElement;
-
-  for (const section of sections) {
-    const mark = document.createElement("button");
-    mark.type = "button";
-    mark.className = "edge-mark";
-    mark.dataset.label = section.dataset.label || section.id;
-    mark.setAttribute("aria-label", `Go to ${mark.dataset.label}`);
-    mark.addEventListener("click", () => {
-      section.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-    marks.append(mark);
+  if (sections.length === 0) {
+    return;
   }
+  const links = sections.map((section, order) => {
+    const link = document.createElement("a");
+    link.href = `#${section.id}`;
+    const label = document.createElement("span");
+    label.textContent = section.dataset.label || section.id;
+    const mark = document.createElement("span");
+    mark.className = "mark";
+    link.append(label, mark);
+    if (order === 0) {
+      link.setAttribute("aria-current", "true");
+    }
+    index.append(link);
+    return link;
+  });
 
   let frame = 0;
   const draw = () => {
     frame = 0;
-    const height = edge.clientHeight - 36;
-    const scrollable = root.scrollHeight - innerHeight;
-    const ratio = scrollable > 0 ? Math.min(1, Math.max(0, scrollY / scrollable)) : 0;
-    const size = Math.max(28, Math.round((innerHeight / root.scrollHeight) * height));
-    thumb.style.height = `${size}px`;
-    thumb.style.transform = `translateY(${Math.round(ratio * (height - size))}px)`;
-    sections.forEach((section, index) => {
-      const top = section.getBoundingClientRect().top + scrollY;
-      const at = Math.min(1, top / Math.max(1, root.scrollHeight));
-      marks.children[index].style.top = `${Math.round(at * height)}px`;
+    const line = innerHeight * 0.34;
+    let active = 0;
+    sections.forEach((section, order) => {
+      if (section.getBoundingClientRect().top <= line) {
+        active = order;
+      }
     });
-    root.classList.toggle("at-top", scrollY < 4);
+    links.forEach((link, order) => {
+      if (order === active) {
+        link.setAttribute("aria-current", "true");
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    });
   };
-
   const schedule = () => {
     if (!frame) {
       frame = requestAnimationFrame(draw);
     }
   };
-
   addEventListener("scroll", schedule, { passive: true });
   addEventListener("resize", schedule);
   draw();
@@ -116,9 +119,8 @@ function startCopy() {
       continue;
     }
     button.addEventListener("click", async () => {
-      const text = code.textContent;
       try {
-        await navigator.clipboard.writeText(text);
+        await navigator.clipboard.writeText(code.textContent);
         button.textContent = "copied";
       } catch (error) {
         button.textContent = "select all";
@@ -131,5 +133,5 @@ function startCopy() {
 }
 
 startTheme();
-startEdge();
+startIndex();
 startCopy();

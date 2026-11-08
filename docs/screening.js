@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // The screening desks. Every verdict on these pages comes from the library
-// compiled to JavaScript; this file only moves text to and from it.
+// compiled to JavaScript; this file only moves text to and from it, and turns
+// the answer into the mark a reviewer would leave.
 
 const engine = await load("./engine/moonskill.js");
 const cases = (await load("./engine/cases.js"))?.cases || [];
@@ -27,7 +28,7 @@ function mount(desk) {
   const rootInput = desk.querySelector(".root");
   const list = desk.querySelector(".verdicts");
   const state = desk.querySelector(".state");
-  const readLine = desk.querySelector(".read-line");
+  const stamp = desk.querySelector(".form-stamp .stamp");
 
   const render = () => {
     if (!engine) {
@@ -44,29 +45,34 @@ function mount(desk) {
       return;
     }
     const faults = answer.faults;
-    if (readLine) {
-      readLine.textContent = answer.summary || "no name and no description to show";
-    }
     list.replaceChildren();
     if (faults.length === 0) {
       list.append(note("no faults — a client would offer this skill as it stands"));
       state.textContent = "accepted";
       state.dataset.clean = "true";
-      return;
+    } else {
+      for (const fault of faults) {
+        const entry = document.createElement("li");
+        const kind = document.createElement("span");
+        kind.className = "kind";
+        kind.textContent = fault.kind;
+        const message = document.createElement("span");
+        message.className = "message";
+        message.textContent = fault.message;
+        entry.append(kind, message);
+        list.append(entry);
+      }
+      state.textContent = faults.length === 1 ? "1 fault" : `${faults.length} faults`;
+      state.dataset.clean = "false";
     }
-    for (const fault of faults) {
-      const entry = document.createElement("li");
-      const kind = document.createElement("span");
-      kind.className = "kind";
-      kind.textContent = fault.kind;
-      const message = document.createElement("span");
-      message.className = "message";
-      message.textContent = fault.message;
-      entry.append(kind, message);
-      list.append(entry);
+    if (stamp) {
+      const clean = faults.length === 0;
+      stamp.firstChild.textContent = clean ? "accepted" : "refused";
+      stamp.querySelector("em").textContent = clean
+        ? "0 faults"
+        : `${faults.length} ${faults.length === 1 ? "fault" : "faults"}`;
+      stamp.className = clean ? "stamp stamp--ink" : "stamp";
     }
-    state.textContent = faults.length === 1 ? "1 fault" : `${faults.length} faults`;
-    state.dataset.clean = "false";
   };
 
   let timer = 0;
@@ -134,7 +140,7 @@ if (wall) {
       button.addEventListener("click", () => {
         if (first) {
           first.open(one);
-          document.querySelector(".desk").scrollIntoView({ behavior: "smooth", block: "center" });
+          document.querySelector(".form").scrollIntoView({ behavior: "smooth", block: "center" });
         }
       });
       wall.append(button);
