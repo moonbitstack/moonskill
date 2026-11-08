@@ -1,9 +1,9 @@
 // Copyright 2026 Leo Cheng
 // SPDX-License-Identifier: Apache-2.0
 
-// The sheet's three small behaviours: the theme switch, the section index that
-// stands in for a scrollbar, and copy buttons. Nothing here knows what a skill
-// is.
+// The sheet's small behaviours: the theme switch, the section index that stands
+// in for a scrollbar, the tab back to the top, and copy buttons. Nothing here
+// knows what a skill is.
 
 const THEME_KEY = "moonskill:theme";
 
@@ -111,6 +111,26 @@ function startIndex() {
   draw();
 }
 
+function startToTop() {
+  const link = document.querySelector(".totop");
+  if (!link) {
+    return;
+  }
+  let frame = 0;
+  const draw = () => {
+    frame = 0;
+    link.classList.toggle("is-on", scrollY > innerHeight * 0.8);
+  };
+  const schedule = () => {
+    if (!frame) {
+      frame = requestAnimationFrame(draw);
+    }
+  };
+  addEventListener("scroll", schedule, { passive: true });
+  addEventListener("resize", schedule);
+  draw();
+}
+
 function startCopy() {
   for (const head of document.querySelectorAll(".code-head")) {
     const button = head.querySelector(".copy");
@@ -134,4 +154,5 @@ function startCopy() {
 
 startTheme();
 startIndex();
+startToTop();
 startCopy();

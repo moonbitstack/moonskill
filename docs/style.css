@@ -174,56 +174,49 @@ textarea,
 
 /* ---------- file tabs ---------- */
 
+/* Tabs grow out of the sheet's top-left corner and end on its top edge, the
+   way a folder's tabs do: flush with the paper's left border, the current one
+   the same paper as the sheet so the edge runs through it. */
 .tabs {
-  display: flex;
-  gap: 4px;
-  margin-top: -34px;
-  padding: 0 0 0 58px;
   position: relative;
-  z-index: 2;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  margin: -26px 0 0 -66px;
+  padding: 0;
 }
 
 .tab {
-  padding: 9px 16px 8px;
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 18px;
   font-family: var(--mono);
   font-size: 9.5px;
+  line-height: 1;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
   background: var(--paper-shade);
   border: 1px solid var(--rule);
-  border-bottom: 0;
-  border-radius: 5px 5px 0 0;
-  position: relative;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 4px 4px 0 0;
+  white-space: nowrap;
+  transition: color 140ms linear, background-color 140ms linear;
 }
 
 .tab:hover {
   color: var(--ink);
+  background: var(--paper);
   border-color: var(--rule);
 }
 
 .tab[aria-current="page"] {
-  background: var(--paper);
   color: var(--ink);
-  z-index: 3;
-}
-
-.tab[aria-current="page"]::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -3px;
-  height: 3px;
   background: var(--paper);
-}
-
-.tab--out {
-  margin-left: auto;
-  border-bottom: 0;
-  background: transparent;
-  border-color: transparent;
-  color: var(--muted);
+  border-color: var(--rule);
+  border-bottom-color: var(--paper);
 }
 
 /* ---------- the document header ---------- */
@@ -1351,6 +1344,67 @@ td code {
   }
 }
 
+/* ---------- back to the top ---------- */
+
+/* A tab lying on the desk rather than on the sheet: it appears once the reader
+   is deep enough that the header is out of reach. */
+.totop {
+  position: fixed;
+  z-index: 40;
+  right: 22px;
+  bottom: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px 7px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  box-shadow: 3px 3px 0 0 var(--paper-shade);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 180ms linear, transform 200ms ease-out,
+    visibility 0s linear 200ms;
+}
+
+.totop.is-on {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.totop:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.totop .arrow {
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 0.8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .totop {
+    transition: none;
+    transform: none;
+  }
+}
+
+@media print {
+  .totop {
+    display: none;
+  }
+}
+
 /* ---------- narrow ---------- */
 
 @media (width <= 1180px) {
@@ -1361,7 +1415,7 @@ td code {
 
 @media (width <= 860px) {
   body {
-    padding-top: 0;
+    padding-top: 32px;
     font-size: 16px;
     background-image: none;
   }
@@ -1379,14 +1433,15 @@ td code {
   }
 
   .tabs {
-    margin-top: 0;
-    padding: 12px 0 0;
+    margin: -24px 0 0 -24px;
     gap: 3px;
     overflow-x: auto;
+    overflow-y: hidden;
   }
 
   .tab {
-    padding: 8px 10px 7px;
+    height: 24px;
+    padding: 0 12px;
     font-size: 8.5px;
     letter-spacing: 0.1em;
     white-space: nowrap;
@@ -1457,6 +1512,15 @@ td code {
   .form-stamp {
     display: none;
   }
+
+  .totop {
+    right: 12px;
+    bottom: 12px;
+    padding: 6px 9px 5px;
+    font-size: 8.5px;
+    letter-spacing: 0.14em;
+    gap: 5px;
+  }
 }
 
 @media (width <= 620px) {
@@ -1473,12 +1537,6 @@ td code {
 
   .docline .right {
     gap: 10px;
-  }
-}
-
-@media (width <= 430px) {
-  .tab--out {
-    display: none;
   }
 }
 
