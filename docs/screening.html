@@ -22,7 +22,10 @@
 </head>
 <body id="top">
 
-<main class="sheet">
+<a class="skip" href="#main">skip to the sheet</a>
+
+
+<main class="sheet" id="main" tabindex="-1">
 
   <nav class="tabs" aria-label="Pages">
     <a class="tab" href="index.html">home</a>
@@ -58,7 +61,7 @@
       <div class="form-head">
         <span>application</span>
         <label class="root-label">in directory <input class="root" value="pdf-tools" spellcheck="false" autocapitalize="off" aria-label="Directory name"></label>
-        <span class="state" data-clean="true">accepted</span>
+        <span class="state" data-clean="true" role="status" aria-live="polite">accepted</span>
       </div>
       <div class="form-grid">
         <div class="pane pane-doc">
@@ -75,7 +78,6 @@ stdout, one page per line.
         </div>
         <div class="pane">
           <ul class="verdicts" aria-live="polite" aria-label="Verdicts"></ul>
-          <div class="form-stamp"><span class="stamp">accepted<em>0 faults</em></span></div>
         </div>
       </div>
       <div class="form-foot">

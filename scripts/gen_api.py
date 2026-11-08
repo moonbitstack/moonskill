@@ -452,7 +452,9 @@ PAGE = """<!doctype html>
 </head>
 <body id="top">
 
-<main class="sheet">
+<a class="skip" href="#main">skip to the sheet</a>
+
+<main class="sheet" id="main" tabindex="-1">
 
   <nav class="tabs" aria-label="Pages">
     <a class="tab" href="index.html">home</a>

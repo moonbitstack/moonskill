@@ -28,8 +28,6 @@ function mount(desk) {
   const rootInput = desk.querySelector(".root");
   const list = desk.querySelector(".verdicts");
   const state = desk.querySelector(".state");
-  const stamp = desk.querySelector(".form-stamp .stamp");
-  let stamped = "";
 
   const render = () => {
     if (!engine) {
@@ -65,21 +63,6 @@ function mount(desk) {
       }
       state.textContent = faults.length === 1 ? "1 fault" : `${faults.length} faults`;
       state.dataset.clean = "false";
-    }
-    if (stamp) {
-      const clean = faults.length === 0;
-      stamp.firstChild.textContent = clean ? "accepted" : "refused";
-      stamp.querySelector("em").textContent = clean
-        ? "0 faults"
-        : `${faults.length} ${faults.length === 1 ? "fault" : "faults"}`;
-      stamp.className = clean ? "stamp stamp--ink" : "stamp";
-      const verdict = clean ? "accepted" : "refused";
-      if (verdict !== stamped) {
-        stamped = verdict;
-        stamp.classList.remove("is-fresh");
-        void stamp.offsetWidth;
-        stamp.classList.add("is-fresh");
-      }
     }
   };
 

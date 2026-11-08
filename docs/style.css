@@ -1,9 +1,9 @@
 /* moonskill — a curriculum vitae, screened.
  *
  * A skill is a résumé and the client reading it is the one hiring. The page is
- * therefore an object: a sheet of paper on a desk, punched, clipped, ruled,
- * stamped and annotated. Type carries the rest — a soft serif for the voice,
- * a monospace for what a machine reads, a hand for the reviewer's pen.
+ * therefore an object: a sheet of paper on a desk, ruled and annotated. Type
+ * carries the rest — a soft serif for the voice, a monospace for what a
+ * machine reads, a hand for the reviewer's pen.
  */
 
 :root {
@@ -17,7 +17,6 @@
   --rule-soft: #e3dac7;
   --accent: #ad3a25;
   --accent-wash: #f2e0d7;
-  --stamp: #a8371f;
   --paper-edge: rgba(255, 255, 255, 0.65);
   --desk-light: rgba(255, 255, 255, 0.5);
   --desk-shade: rgba(96, 74, 44, 0.1);
@@ -40,7 +39,6 @@
   --rule-soft: #2a251d;
   --accent: #d96a50;
   --accent-wash: #2c1c16;
-  --stamp: #b8492f;
   --paper-edge: rgba(255, 255, 255, 0.05);
   --desk-light: rgba(255, 255, 255, 0.04);
   --desk-shade: rgba(0, 0, 0, 0.55);
@@ -59,7 +57,6 @@
     --rule-soft: #2a251d;
     --accent: #d96a50;
     --accent-wash: #2c1c16;
-    --stamp: #b8492f;
     --paper-edge: rgba(255, 255, 255, 0.05);
     --desk-light: rgba(255, 255, 255, 0.04);
     --desk-shade: rgba(0, 0, 0, 0.55);
@@ -166,11 +163,41 @@ textarea,
   white-space: nowrap;
 }
 
+/* ---------- the tab for the keyboard ---------- */
+
+.skip {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 60;
+  padding: 8px 14px 7px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  box-shadow: 3px 3px 0 0 var(--paper-shade);
+  transform: translateY(-220%);
+  transition: transform 160ms ease-out;
+}
+
+.skip:focus-visible {
+  outline: none;
+  border-width: 2px;
+  padding: 7px 13px 6px;
+  transform: none;
+}
+
 /* ---------- the sheet ---------- */
 
 .sheet {
   position: relative;
-  max-width: var(--sheet);
+  /* the desk keeps a margin even when the window is narrow: a sheet that runs
+     edge to edge stops being a sheet */
+  max-width: min(var(--sheet), calc(100vw - 72px));
   margin: 0 auto 72px;
   padding: 0 66px 58px;
   background-color: var(--paper);
@@ -179,6 +206,11 @@ textarea,
     inset 0 1px 0 var(--paper-edge),
     9px 9px 0 0 var(--paper-shade),
     10px 10px 0 0 var(--rule);
+}
+
+/* the skip link lands here; the sheet is a place, not a control */
+.sheet:focus {
+  outline: none;
 }
 
 /* the clip that holds the sheet to whatever it is lying on */
@@ -246,11 +278,11 @@ textarea,
   display: flex;
   align-items: baseline;
   gap: 14px;
-  padding: 16px 0 8px;
+  padding: 16px 0 9px;
   border-bottom: 1px solid var(--ink);
   font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.18em;
+  font-size: 10px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -367,53 +399,6 @@ h1 .tld {
   text-align: center;
 }
 
-.stamp {
-  display: inline-block;
-  padding: 8px 13px 7px;
-  border: 2px solid currentColor;
-  color: var(--stamp);
-  transform: rotate(-8deg);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  text-align: center;
-  position: relative;
-  opacity: 0.92;
-}
-
-.stamp::before {
-  content: "";
-  position: absolute;
-  inset: 3px;
-  border: 1px solid currentColor;
-  pointer-events: none;
-}
-
-.stamp em {
-  display: block;
-  font-style: normal;
-  font-size: 7.5px;
-  letter-spacing: 0.14em;
-  margin-top: 3px;
-  opacity: 0.85;
-}
-
-.stamp--ink {
-  color: var(--ink-soft);
-}
-
-.portrait .stamp {
-  position: absolute;
-  right: -8px;
-  bottom: 22px;
-  z-index: 3;
-  font-size: 11px;
-  padding: 8px 13px 7px;
-}
-
 /* ---------- ruled fields, the way a form asks ---------- */
 
 .fields {
@@ -437,7 +422,7 @@ h1 .tld {
   flex: 0 0 auto;
   font-family: var(--mono);
   font-size: 9.5px;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -845,54 +830,22 @@ h1 .tld {
   border-color: var(--accent);
 }
 
-/* the verdict, stamped over the sheet's corner */
-.form-stamp {
-  position: absolute;
-  right: 14px;
-  bottom: 12px;
-  z-index: 2;
-  pointer-events: none;
-  opacity: 0.9;
-}
-
-.form-stamp .stamp {
-  transform: rotate(-6deg);
-  font-size: 12px;
-  padding: 8px 13px 7px;
-}
-
-.stamp.is-fresh {
-  animation: restamp 320ms cubic-bezier(0.22, 0.65, 0.35, 1);
-}
-
-@keyframes restamp {
-  from {
-    opacity: 0;
-    transform: rotate(-17deg) scale(1.16);
-  }
-  to {
-    opacity: 0.92;
-    transform: rotate(-6deg) scale(1);
-  }
-}
-
 /* ---------- figures as form lines ---------- */
 
 .figures {
-  margin: 20px 0 0;
+  margin: 30px 0 0;
   padding: 0;
-  max-width: 620px;
   display: grid;
-  gap: 2px;
+  gap: 0;
   border-top: 1px solid var(--rule-soft);
-  padding-top: 10px;
+  padding-top: 8px;
 }
 
 .figure {
   display: flex;
   align-items: baseline;
   gap: 10px;
-  padding: 3px 0;
+  padding: 8px 0;
 }
 
 .figure dt {
@@ -1475,7 +1428,7 @@ td code {
 
 /* ---------- narrow ---------- */
 
-@media (width <= 1180px) {
+@media (width <= 1280px) {
   .index {
     display: none;
   }
@@ -1489,6 +1442,7 @@ td code {
   }
 
   .sheet {
+    max-width: none;
     margin: 0 0 40px;
     padding: 0 24px 40px;
     border-left: 0;
@@ -1523,15 +1477,6 @@ td code {
   .portrait {
     width: 132px;
     margin: 0;
-  }
-
-  .portrait .stamp {
-    position: static;
-    display: inline-block;
-    width: max-content;
-    margin: 12px 0 0 2px;
-    transform: rotate(-5deg) scale(0.95);
-    transform-origin: left top;
   }
 
   .entry {
@@ -1577,10 +1522,6 @@ td code {
     text-align: left;
   }
 
-  .form-stamp {
-    display: none;
-  }
-
   .totop {
     right: 10px;
     bottom: 10px;
@@ -1596,7 +1537,7 @@ td code {
 
 @media (width <= 620px) {
   .docline {
-    font-size: 8.5px;
+    font-size: 9.5px;
     letter-spacing: 0.12em;
     gap: 10px;
     flex-wrap: wrap;
@@ -1606,15 +1547,45 @@ td code {
     display: none;
   }
 
+  /* the source link is repeated in the footer; here it only forces a wrap */
+  .docline .right > a {
+    display: none;
+  }
+
   .docline .right {
     gap: 10px;
   }
 }
 
+@media (width <= 380px) {
+  /* below this the file line cannot hold the page's name and its code */
+  .docline > span:nth-child(2) {
+    display: none;
+  }
+}
+
 @media print {
+  /* ink on white whatever the screen was set to: a dark theme printed to a
+     dark page is a page nobody can read. */
+  :root,
+  :root[data-theme="ink"] {
+    --desk: #fff;
+    --paper: #fff;
+    --paper-shade: #f2f2f2;
+    --ink: #000;
+    --ink-soft: #2c2c2c;
+    --muted: #5a5a5a;
+    --rule: #b9b9b9;
+    --rule-soft: #dcdcdc;
+    --accent: #a3301c;
+    --accent-wash: #f0e4df;
+    --paper-edge: transparent;
+  }
+
   .entry,
   .code,
-  .tiers li {
+  .tiers li,
+  .figure {
     break-inside: avoid;
   }
 
@@ -1622,20 +1593,27 @@ td code {
   .index,
   .clip,
   .form-foot,
-  .code-head .copy {
+  .code-head .copy,
+  .totop,
+  .skip,
+  .theme {
     display: none;
   }
 
   body {
+    padding: 0;
     background: #fff;
     color: #000;
-    font-size: 11pt;
+    font-size: 10.5pt;
+    line-height: 1.5;
+    background-image: none;
   }
 
   .sheet {
-    box-shadow: none;
-    border: 0;
     max-width: none;
-    padding: 0;
+    margin: 0;
+    padding: 0 10mm;
+    border: 0;
+    box-shadow: none;
   }
 }
