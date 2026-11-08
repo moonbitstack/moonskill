@@ -253,11 +253,16 @@ textarea,
   z-index: 3;
   display: flex;
   align-items: flex-end;
-  gap: 3px;
+  gap: 0;
   /* one pixel further than the padding, so the tab's border lands on the
      sheet's own border instead of beside it */
   margin: -26px 0 0 -67px;
   padding: 0;
+}
+
+.tab + .tab {
+  /* the tabs sit side by side and share their borders */
+  margin-left: -1px;
 }
 
 .tab {
@@ -283,6 +288,11 @@ textarea,
   color: var(--ink);
   background: var(--paper);
   border-color: var(--rule);
+}
+
+.tab:first-child {
+  /* the first tab is the sheet's corner, not a box beside it */
+  border-top-left-radius: 0;
 }
 
 .tab[aria-current="page"] {
