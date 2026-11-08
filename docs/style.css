@@ -261,7 +261,7 @@ h1 {
   letter-spacing: -0.024em;
   font-weight: 600;
   margin: 0;
-  max-width: 15ch;
+  max-width: 660px;
 }
 
 h1 em {
@@ -269,7 +269,7 @@ h1 em {
   font-style: italic;
   font-weight: 400;
   color: var(--ink-soft);
-  font-size: 0.58em;
+  font-size: 0.54em;
   letter-spacing: -0.012em;
   line-height: 1.22;
   margin-top: 0.28em;
