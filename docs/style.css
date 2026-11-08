@@ -236,7 +236,7 @@ textarea,
   display: flex;
   align-items: flex-end;
   gap: 3px;
-  margin: -26px 0 0 -66px;
+  margin: -26px 0 0;
   padding: 0;
 }
 
@@ -321,12 +321,28 @@ textarea,
 }
 
 .masthead {
-  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 168px;
-  gap: 40px;
+  grid-template-columns: minmax(0, 1fr) 448px;
+  column-gap: 56px;
+  row-gap: 22px;
   padding: 30px 0 0;
   align-items: start;
+}
+
+.masthead h1 {
+  grid-column: 1 / -1;
+}
+
+.masthead .role {
+  grid-column: 1;
+  margin-top: 0;
+  max-width: 40ch;
+  text-wrap: balance;
+}
+
+.masthead .fields {
+  grid-column: 2;
+  margin-top: 0;
 }
 
 h1 {
@@ -367,36 +383,6 @@ h1 .tld {
 
 .masthead--sub .role {
   max-width: 48ch;
-}
-
-/* the photograph a CV has where the face would be */
-.portrait {
-  position: relative;
-  margin: 6px 0 0;
-  transform: rotate(-1.4deg);
-}
-
-.portrait .frame {
-  display: block;
-  border: 1px solid var(--ink);
-  background: var(--paper-shade);
-  padding: 6px;
-}
-
-.portrait svg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.portrait figcaption {
-  margin-top: 7px;
-  font-family: var(--mono);
-  font-size: 8.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-align: center;
 }
 
 /* ---------- ruled fields, the way a form asks ---------- */
@@ -1309,7 +1295,11 @@ td code {
     background: transparent;
   }
 
-  html::-webkit-scrollbar-corner {
+  html::-webkit-scrollbar-corner,
+  .code ::-webkit-scrollbar-corner,
+  .code::-webkit-scrollbar-corner,
+  .verdicts::-webkit-scrollbar-corner,
+  textarea::-webkit-scrollbar-corner {
     background: transparent;
   }
 
@@ -1455,7 +1445,7 @@ td code {
   }
 
   .tabs {
-    margin: -24px 0 0 -24px;
+    margin: -24px 0 0;
     gap: 3px;
     overflow-x: auto;
     overflow-y: hidden;
@@ -1474,9 +1464,10 @@ td code {
     gap: 20px;
   }
 
-  .portrait {
-    width: 132px;
-    margin: 0;
+  .masthead h1,
+  .masthead .role,
+  .masthead .fields {
+    grid-column: 1;
   }
 
   .entry {
@@ -1580,6 +1571,18 @@ td code {
     --accent: #a3301c;
     --accent-wash: #f0e4df;
     --paper-edge: transparent;
+  }
+
+  /* the printed page is narrower than any screen this was laid out for */
+  .masthead {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 14px;
+  }
+
+  .masthead h1,
+  .masthead .role,
+  .masthead .fields {
+    grid-column: 1;
   }
 
   .entry,
