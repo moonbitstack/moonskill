@@ -447,7 +447,9 @@ PAGE = """<!doctype html>
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="preload" href="fonts/harmonyos-sans-sc-regular.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="fonts/harmonyos-sans-sc-bold.woff" as="font" type="font/woff" crossorigin>
 <link rel="stylesheet" href="style.css">
 </head>
 <body id="top">
