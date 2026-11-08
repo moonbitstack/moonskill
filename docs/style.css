@@ -12,12 +12,15 @@
   --paper-shade: #f0e9d9;
   --ink: #191610;
   --ink-soft: #4b4437;
-  --muted: #7b7261;
+  --muted: #6e6555;
   --rule: #cfc5b1;
   --rule-soft: #e3dac7;
   --accent: #ad3a25;
   --accent-wash: #f2e0d7;
   --stamp: #a8371f;
+  --paper-edge: rgba(255, 255, 255, 0.65);
+  --desk-light: rgba(255, 255, 255, 0.5);
+  --desk-shade: rgba(96, 74, 44, 0.1);
   --display: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
   --text: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -38,6 +41,9 @@
   --accent: #d96a50;
   --accent-wash: #2c1c16;
   --stamp: #b8492f;
+  --paper-edge: rgba(255, 255, 255, 0.05);
+  --desk-light: rgba(255, 255, 255, 0.04);
+  --desk-shade: rgba(0, 0, 0, 0.55);
   color-scheme: dark;
 }
 
@@ -54,6 +60,9 @@
     --accent: #d96a50;
     --accent-wash: #2c1c16;
     --stamp: #b8492f;
+    --paper-edge: rgba(255, 255, 255, 0.05);
+    --desk-light: rgba(255, 255, 255, 0.04);
+    --desk-shade: rgba(0, 0, 0, 0.55);
     color-scheme: dark;
   }
 }
@@ -74,17 +83,31 @@ html {
   html {
     scroll-behavior: auto;
   }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
 }
 
 body {
   margin: 0;
   padding-top: 46px;
   background-color: var(--desk);
+  background-image:
+    radial-gradient(150% 110% at 50% -25%, var(--desk-light), transparent 58%),
+    radial-gradient(100% 70% at 50% 112%, var(--desk-shade), transparent 58%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--text);
-  font-size: 16.5px;
-  line-height: 1.62;
+  font-size: 17px;
+  line-height: 1.58;
   font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 8, "WONK" 0;
   font-variant-ligatures: no-contextual;
   -webkit-font-smoothing: antialiased;
 }
@@ -123,11 +146,12 @@ textarea,
 }
 
 :not(pre) > code {
-  font-size: 0.85em;
-  padding: 0.08em 0.3em;
+  font-size: 0.86em;
+  padding: 0.06em 0.28em;
   background: var(--paper-shade);
-  border: 1px solid var(--rule-soft);
   border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
   overflow-wrap: anywhere;
 }
 
@@ -150,12 +174,9 @@ textarea,
   margin: 0 auto 72px;
   padding: 0 66px 58px;
   background-color: var(--paper);
-  background-image:
-    radial-gradient(circle at 30px 150px, var(--desk) 5.5px, var(--rule) 6px, transparent 6.6px),
-    radial-gradient(circle at 30px 232px, var(--desk) 5.5px, var(--rule) 6px, transparent 6.6px);
-  background-repeat: no-repeat;
   border: 1px solid var(--rule);
   box-shadow:
+    inset 0 1px 0 var(--paper-edge),
     9px 9px 0 0 var(--paper-shade),
     10px 10px 0 0 var(--rule);
 }
@@ -193,7 +214,7 @@ textarea,
   height: 26px;
   padding: 0 18px;
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 10px;
   line-height: 1;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -262,6 +283,11 @@ textarea,
   border-color: var(--ink-soft);
 }
 
+.theme:active,
+.chip:active {
+  transform: translateY(1px);
+}
+
 .masthead {
   position: relative;
   display: grid;
@@ -278,7 +304,8 @@ h1 {
   line-height: 0.92;
   letter-spacing: -0.035em;
   font-weight: 500;
-  font-variation-settings: "SOFT" 0, "WONK" 1, "opsz" 144;
+  font-variation-settings: "SOFT" 12, "WONK" 1, "opsz" 144;
+  text-wrap: balance;
 }
 
 h1 .tld {
@@ -288,9 +315,9 @@ h1 .tld {
 
 .role {
   margin: 18px 0 0;
-  max-width: 34ch;
-  font-size: clamp(19px, 2.1vw, 24px);
-  line-height: 1.4;
+  max-width: 33ch;
+  font-size: clamp(19px, 2vw, 23px);
+  line-height: 1.45;
   font-style: italic;
   font-weight: 300;
   color: var(--ink-soft);
@@ -378,10 +405,10 @@ h1 .tld {
   color: var(--ink-soft);
 }
 
-.masthead .stamp {
+.portrait .stamp {
   position: absolute;
-  right: 96px;
-  top: 196px;
+  right: -8px;
+  bottom: 22px;
   z-index: 3;
   font-size: 11px;
   padding: 8px 13px 7px;
@@ -390,11 +417,11 @@ h1 .tld {
 /* ---------- ruled fields, the way a form asks ---------- */
 
 .fields {
-  margin: 26px 0 0;
-  max-width: 420px;
+  margin: 30px 0 0;
+  max-width: 448px;
   padding: 0;
   display: grid;
-  gap: 3px;
+  gap: 4px;
   border-top: 1px solid var(--ink);
   padding-top: 12px;
 }
@@ -410,7 +437,7 @@ h1 .tld {
   flex: 0 0 auto;
   font-family: var(--mono);
   font-size: 9.5px;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -425,9 +452,10 @@ h1 .tld {
 .field dd {
   margin: 0;
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--ink);
   text-align: right;
+  font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
 
@@ -438,20 +466,21 @@ h1 .tld {
 /* ---------- sections ---------- */
 
 .section {
-  margin-top: 54px;
+  margin-top: 64px;
+  scroll-margin-top: 26px;
 }
 
 .sec {
   display: flex;
   align-items: baseline;
   gap: 12px;
-  margin: 0 0 6px;
-  padding-top: 7px;
+  margin: 0 0 13px;
+  padding-top: 9px;
   border-top: 1px solid var(--ink);
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 400;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
@@ -467,20 +496,24 @@ h1 .tld {
 .sec .of {
   margin-left: auto;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  font-variant-numeric: tabular-nums;
 }
 
 .lede {
-  margin: 18px 0 0;
-  font-size: 20px;
-  line-height: 1.5;
-  max-width: 46ch;
+  margin: 20px 0 0;
+  font-size: 21px;
+  line-height: 1.45;
+  max-width: 42ch;
+  letter-spacing: -0.004em;
   color: var(--ink-soft);
 }
 
 .section p {
-  margin: 14px 0 0;
-  max-width: 64ch;
+  margin: 16px 0 0;
+  max-width: 62ch;
+  text-wrap: pretty;
 }
 
 .section p:first-child {
@@ -494,9 +527,9 @@ h1 .tld {
 /* a CV entry: what on the left, what happened on the right */
 .entry {
   display: grid;
-  grid-template-columns: 178px minmax(0, 1fr);
-  gap: 34px;
-  padding: 16px 0 18px;
+  grid-template-columns: 186px minmax(0, 1fr);
+  gap: 36px;
+  padding: 18px 0 20px;
   border-bottom: 1px solid var(--rule-soft);
 }
 
@@ -522,24 +555,27 @@ h1 .tld {
 .entry h3 {
   margin: 0;
   font-family: var(--display);
-  font-size: 21px;
+  font-size: 22px;
   font-weight: 500;
   letter-spacing: -0.012em;
-  line-height: 1.2;
+  line-height: 1.15;
+  text-wrap: balance;
 }
 
 .entry p {
-  margin: 6px 0 0;
-  max-width: 58ch;
+  margin: 7px 0 0;
+  max-width: 56ch;
   color: var(--ink-soft);
-  font-size: 15.5px;
+  font-size: 16px;
+  line-height: 1.55;
+  text-wrap: pretty;
 }
 
 /* ---------- the reviewer's pen ---------- */
 
 .pen {
   font-family: var(--pen);
-  font-size: 21px;
+  font-size: 22px;
   line-height: 1.25;
   color: var(--accent);
   transform: rotate(-1.6deg);
@@ -569,7 +605,7 @@ h1 .tld {
 
 .tiers li {
   position: relative;
-  padding: 14px 0 14px calc(var(--depth) * 34px + 34px);
+  padding: 15px 0 15px calc(var(--depth) * 34px + 34px);
   border-bottom: 1px solid var(--rule-soft);
 }
 
@@ -594,16 +630,16 @@ h1 .tld {
 
 .tiers .what {
   display: block;
-  margin-top: 5px;
-  font-size: 17px;
+  margin-top: 6px;
+  font-size: 17.5px;
   line-height: 1.45;
 }
 
 .tiers .how {
   display: block;
-  margin-top: 4px;
+  margin-top: 5px;
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: 11px;
   color: var(--muted);
   overflow-wrap: anywhere;
 }
@@ -626,7 +662,7 @@ h1 .tld {
   border-bottom: 1px solid var(--ink);
   background: var(--paper-shade);
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 10px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
@@ -705,13 +741,18 @@ h1 .tld {
   );
   background-attachment: local;
   color: var(--ink);
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 24px;
   tab-size: 2;
 }
 
 .form textarea:focus {
   outline: none;
+}
+
+/* the browser's resize grip is a bright square in the dark theme */
+.form textarea::-webkit-resizer {
+  background: transparent;
 }
 
 .verdicts {
@@ -745,14 +786,14 @@ h1 .tld {
 .verdicts .kind {
   display: block;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 11.5px;
   color: var(--accent);
 }
 
 .verdicts .message {
   display: block;
-  margin-top: 2px;
-  font-size: 13.5px;
+  margin-top: 3px;
+  font-size: 14px;
   line-height: 1.45;
   color: var(--ink-soft);
 }
@@ -820,11 +861,27 @@ h1 .tld {
   padding: 8px 13px 7px;
 }
 
+.stamp.is-fresh {
+  animation: restamp 320ms cubic-bezier(0.22, 0.65, 0.35, 1);
+}
+
+@keyframes restamp {
+  from {
+    opacity: 0;
+    transform: rotate(-17deg) scale(1.16);
+  }
+  to {
+    opacity: 0.92;
+    transform: rotate(-6deg) scale(1);
+  }
+}
+
 /* ---------- figures as form lines ---------- */
 
 .figures {
-  margin: 18px 0 0;
+  margin: 20px 0 0;
   padding: 0;
+  max-width: 620px;
   display: grid;
   gap: 2px;
   border-top: 1px solid var(--rule-soft);
@@ -912,7 +969,7 @@ h1 .tld {
   padding: 6px 11px;
   border-bottom: 1px solid var(--rule);
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 9.5px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
@@ -934,12 +991,16 @@ h1 .tld {
   color: var(--accent);
 }
 
+.code-head .copy.is-done {
+  color: var(--accent);
+}
+
 pre {
   margin: 0;
-  padding: 13px 15px;
+  padding: 14px 15px;
   overflow-x: auto;
-  font-size: 12.5px;
-  line-height: 1.7;
+  font-size: 13px;
+  line-height: 1.65;
   color: var(--ink);
   tab-size: 2;
 }
@@ -949,7 +1010,7 @@ pre {
   border-top: 1px solid var(--rule);
   color: var(--ink-soft);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 12.5px;
   line-height: 1.6;
   overflow-x: auto;
   white-space: pre;
@@ -961,23 +1022,23 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin: 16px 0 0;
-  font-size: 14.5px;
+  font-size: 15px;
 }
 
 th {
   text-align: left;
   font-family: var(--mono);
-  font-size: 9.5px;
+  font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
   font-weight: 400;
-  padding: 0 14px 6px 0;
+  padding: 0 14px 7px 0;
   border-bottom: 1px solid var(--ink);
 }
 
 td {
-  padding: 9px 14px 9px 0;
+  padding: 10px 14px 10px 0;
   border-bottom: 1px solid var(--rule-soft);
   vertical-align: top;
   color: var(--ink-soft);
@@ -1002,7 +1063,7 @@ td code {
   z-index: 30;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   align-items: flex-end;
 }
 
@@ -1011,14 +1072,15 @@ td code {
   align-items: center;
   gap: 9px;
   font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.12em;
+  font-size: 9.5px;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--muted);
   border: 0;
   padding: 3px 0;
   opacity: 0.62;
-  transition: opacity 160ms linear, color 160ms linear;
+  transition: opacity 160ms linear, color 160ms linear,
+    transform 160ms ease-out;
 }
 
 .index a .mark {
@@ -1031,6 +1093,7 @@ td code {
 .index a:hover {
   opacity: 1;
   color: var(--ink);
+  transform: translateX(-3px);
 }
 
 .index a[aria-current="true"] {
@@ -1066,15 +1129,20 @@ td code {
 
 .foot .small {
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 9.5px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
   text-align: right;
+  line-height: 1.8;
 }
 
 .foot .small a {
-  border: 0;
+  border-bottom: 1px solid transparent;
+}
+
+.foot .small a:hover {
+  border-bottom-color: var(--accent);
 }
 
 /* ---------- api reference ---------- */
@@ -1117,7 +1185,7 @@ td code {
 
 .api-name {
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--ink);
   background: none;
   border: 0;
@@ -1127,7 +1195,7 @@ td code {
 
 .api-kind {
   font-family: var(--mono);
-  font-size: 8.5px;
+  font-size: 9px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);
@@ -1137,8 +1205,8 @@ td code {
   margin: 5px 0 0;
   padding: 0;
   font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.55;
+  font-size: 11.5px;
+  line-height: 1.6;
   color: var(--ink-soft);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -1146,10 +1214,10 @@ td code {
 }
 
 .api-doc {
-  margin-top: 7px;
-  max-width: 62ch;
-  font-size: 14px;
-  line-height: 1.55;
+  margin-top: 8px;
+  max-width: 68ch;
+  font-size: 14.5px;
+  line-height: 1.58;
   color: var(--ink-soft);
 }
 
@@ -1238,7 +1306,7 @@ td code {
 
 .case .dir {
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: 12px;
   min-width: 0;
   flex: 0 1 auto;
   white-space: nowrap;
@@ -1457,9 +1525,9 @@ td code {
     margin: 0;
   }
 
-  .masthead .stamp {
+  .portrait .stamp {
     position: static;
-    justify-self: start;
+    display: inline-block;
     width: max-content;
     margin: 12px 0 0 2px;
     transform: rotate(-5deg) scale(0.95);
@@ -1514,12 +1582,15 @@ td code {
   }
 
   .totop {
-    right: 12px;
-    bottom: 12px;
-    padding: 6px 9px 5px;
-    font-size: 8.5px;
-    letter-spacing: 0.14em;
-    gap: 5px;
+    right: 10px;
+    bottom: 10px;
+    padding: 7px 9px 6px;
+    font-size: 11px;
+    gap: 0;
+  }
+
+  .totop .label {
+    display: none;
   }
 }
 
@@ -1541,6 +1612,12 @@ td code {
 }
 
 @media print {
+  .entry,
+  .code,
+  .tiers li {
+    break-inside: avoid;
+  }
+
   .tabs,
   .index,
   .clip,

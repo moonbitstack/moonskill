@@ -142,11 +142,13 @@ function startCopy() {
       try {
         await navigator.clipboard.writeText(code.textContent);
         button.textContent = "copied";
+        button.classList.add("is-done");
       } catch (error) {
         button.textContent = "select all";
       }
       setTimeout(() => {
         button.textContent = "copy";
+        button.classList.remove("is-done");
       }, 1400);
     });
   }

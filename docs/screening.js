@@ -29,6 +29,7 @@ function mount(desk) {
   const list = desk.querySelector(".verdicts");
   const state = desk.querySelector(".state");
   const stamp = desk.querySelector(".form-stamp .stamp");
+  let stamped = "";
 
   const render = () => {
     if (!engine) {
@@ -72,6 +73,13 @@ function mount(desk) {
         ? "0 faults"
         : `${faults.length} ${faults.length === 1 ? "fault" : "faults"}`;
       stamp.className = clean ? "stamp stamp--ink" : "stamp";
+      const verdict = clean ? "accepted" : "refused";
+      if (verdict !== stamped) {
+        stamped = verdict;
+        stamp.classList.remove("is-fresh");
+        void stamp.offsetWidth;
+        stamp.classList.add("is-fresh");
+      }
     }
   };
 
