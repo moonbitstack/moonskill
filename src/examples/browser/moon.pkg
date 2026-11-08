@@ -1,0 +1,15 @@
+// Glue for the documentation pages: the library compiled to JavaScript, with
+// one function that takes a document as text and returns the judgement as
+// JSON. Nothing here is part of the published packages — `screen` exists so a
+// page can call `parse`, `validate` and `Skill::summary` themselves instead of
+// reimplementing them in JavaScript.
+import {
+  "moonbitstack/moonskill",
+  "moonbitlang/core/json",
+}
+
+options(
+  "is-main": false,
+  supported_targets: "js",
+  link: { "js": { "exports": [ "screen" ], "format": "esm" } },
+)
