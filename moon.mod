@@ -1,6 +1,6 @@
 name = "moonbitstack/moonskill"
 
-version = "0.1.0"
+version = "0.1.1"
 
 readme = "README.md"
 
@@ -30,7 +30,7 @@ description = "Agent Skills for MoonBit: discover skill directories, read SKILL.
 source = "src"
 
 import {
-  "moonbitstack/moonyaml@0.1.4",
-  "moonbitstack/moonucd@0.1.3",
+  "moonbitstack/moonyaml@0.1.6",
+  "moonbitstack/moonucd@0.1.4",
   "moonbitlang/async@0.22.5",
 }
