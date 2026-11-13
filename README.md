@@ -246,13 +246,22 @@ specification states, in both directions, plus the shapes that make a document
 refuse to parse. The reference validator — `skills-ref` from
 [`agentskills/agentskills`](https://github.com/agentskills/agentskills), pinned by
 commit — judges the same batch, and
-`scripts/conformance/check_reference_parity.py` fails when the two disagree about a
-directory, or count a different number of problems in it. The two agree on all 40
-directories judged — the 39 cases and this library's own skill — 13 accepted and
-27 refused.
+`scripts/conformance/check_reference_parity.py` fails when the two disagree.
+
+Four things are compared: whether a directory passes and how many problems it has;
+the sentences it reports, in the order it reports them; the fields of an accepted
+header; and the `<available_skills>` block the accepted documents produce, which is
+compared as text, because that block is what leaves this library for a client. The
+two agree on all 40 directories judged — the 39 cases and this library's own skill
+— 13 accepted and 27 refused, 13 headers equal, one block identical.
+
+Nothing is listed here because nothing differs. The section is short by
+construction: a rule the two implementations judge differently would appear above
+this line, with the case that shows it.
 
 The comparison runs in CI, together with `scripts/conformance/gen_corpus.py
---check`, so a case cannot be worded in one place and slide in the other.
+--check`, so a case cannot be worded in one place and slide in the other, and this
+paragraph cannot drift from the run that produced it.
 
 ## Licence
 

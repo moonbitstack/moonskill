@@ -1,8 +1,9 @@
 name: Conformance
 
 # The reference validator from agentskills/agentskills judges the same corpus this
-# library does; a case where the two disagree fails the job. The commit is pinned
-# because the corpus is worded against the rules as they read today.
+# library does, and the two have to give the same verdict, the same sentences, the
+# same header fields and the same offered block; any difference fails the job. The
+# commit is pinned because the corpus is worded against the rules as they read today.
 on:
   pull_request:
   push:
