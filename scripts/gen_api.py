@@ -124,6 +124,11 @@ def doc_comments():
                 if depth == 0:
                     pending = []
                 continue
+            if depth == 0 and pending and line.startswith("#"):
+                # An attribute (`#derive`, `#deprecated`) sits between a doc
+                # comment and the declaration it belongs to; the comment is
+                # still about that declaration.
+                continue
             text = "\n".join(pending)
             pending = []
             if depth == 0:
@@ -202,8 +207,10 @@ def declarations(lines):
                 items.append(buf)
                 buf = []
             continue
+        only_attributes = all(line.strip().startswith("#") for line in buf)
         starts = depth == 0 and buf and (
-            text.startswith("pub") or (text.startswith("#") and buf[-1].strip() == "}")
+            (text.startswith("pub") and not only_attributes)
+            or (text.startswith("#") and buf[-1].strip() == "}")
         )
         if starts:
             items.append(buf)
@@ -216,8 +223,13 @@ def declarations(lines):
 
 
 def classify(block):
-    head = next((line for line in block if not line.strip().startswith("#")), "")
-    text = head.strip()
+    head_index = next(
+        (index for index, line in enumerate(block) if not line.strip().startswith("#")),
+        None,
+    )
+    if head_index is None:
+        return None
+    text = block[head_index].strip()
     m = DECL.match(text)
     if not m:
         return None
@@ -228,14 +240,33 @@ def classify(block):
         name = found.group(1) if found else ""
         if not name:
             return None
-        return {"kind": kw, "name": name, "head": text, "block": block}
+        return {
+            "kind": kw,
+            "name": name,
+            "head": text,
+            "head_index": head_index,
+            "block": block,
+        }
     if kw in TYPE_KINDS:
         name = re.split(r"[\[({\s]", rest, maxsplit=1)[0]
-        return {"kind": kw, "name": name, "head": text, "block": block}
+        return {
+            "kind": kw,
+            "name": name,
+            "head": text,
+            "head_index": head_index,
+            "block": block,
+        }
     if kw == "impl":
         target = re.search(r"\bfor\s+([A-Za-z_]\w*)", rest)
         trait = re.split(r"\s+for\s+", rest, maxsplit=1)[0]
-        return {"kind": "impl", "name": trait, "for": target.group(1) if target else None, "head": text, "block": block}
+        return {
+            "kind": "impl",
+            "name": trait,
+            "for": target.group(1) if target else None,
+            "head": text,
+            "head_index": head_index,
+            "block": block,
+        }
     return None
 
 
@@ -246,7 +277,7 @@ def signature(item):
         head = head.split("{", 1)[0].rstrip()
     if item["kind"] in TYPE_KINDS + ("impl",):
         return head
-    for line in item["block"][1:]:
+    for line in item["block"][item["head_index"] + 1:]:
         if line.strip().startswith("}"):
             break
         if line.strip().startswith("#"):
@@ -259,7 +290,7 @@ def signature(item):
 def members(item):
     """The shape inside a type: a field and its type, a variant and its payload, a method."""
     out = []
-    for line in item["block"][1:]:
+    for line in item["block"][item["head_index"] + 1:]:
         text = line.strip()
         if text.startswith("}"):
             break
@@ -370,7 +401,14 @@ def render_package(rel, text, docs, index):
     groups = []
     rendered = 0
     for title, lines in sections(text):
-        items = [classify(block) for block in declarations(lines)]
+        blocks = declarations(lines)
+        items = [classify(block) for block in blocks]
+        for block, item in zip(blocks, items):
+            if item is None:
+                raise SystemExit(
+                    f"{rel or '.'}: a declaration reaches the interface but not the page: "
+                    + " ".join(line.strip() for line in block)
+                )
         items = [item for item in items if item]
         if not items:
             continue
