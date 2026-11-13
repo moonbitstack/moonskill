@@ -270,7 +270,7 @@ pdf-tools/SKILL.md
   <section class="section" id="shell" data-section data-label="from a shell">
     <h2 class="sec"><span class="n">08</span><span class="t">from a shell</span><span class="of">of 08</span></h2>
 
-    <p class="lede">One exit code per directory.</p>
+    <p class="lede">One exit code per directory, and two answers for a program.</p>
     <p><code>src/cmd/skillcheck</code> takes any number of directories, prints one line for each, and exits non-zero when anything failed.</p>
     <div class="code">
         <div class="code-head"><span>shell</span><button class="copy" type="button">copy</button></div>
@@ -286,6 +286,34 @@ pdf-tools/SKILL.md
       </div>
       
     <p><code>--json</code> prints one object per directory instead, which is what a program wants to read: <code>path</code>, <code>valid</code>, and the faults with their tags.</p>
+
+    <p>The same command answers the other two questions. <code>read-properties</code> prints the header as JSON — the six fields the specification defines, the optional ones only when the document has them.</p>
+    <div class="code">
+        <div class="code-head"><span>shell</span><button class="copy" type="button">copy</button></div>
+        <pre data-lang="sh">moon run src/cmd/skillcheck --target native -- read-properties docs/skills/moonskill</pre>
+        <pre class="out">{&quot;name&quot;:&quot;moonskill&quot;,&quot;description&quot;:&quot;Read, validate and discover Agent Skills (SKILL.md directories) from MoonBit. Use when a MoonBit program must load skill documents, judge a SKILL.md against the Agent Skills specification, or put the skill names and descriptions in front of a model.&quot;}</pre>
+      </div>
+
+    <p><code>to-prompt</code> prints tier 1 for the skills it is given, in the order it was given them: the block from the previous step, without writing a program to assemble it.</p>
+    <div class="code">
+        <div class="code-head"><span>shell</span><button class="copy" type="button">copy</button></div>
+        <pre data-lang="sh">moon run src/cmd/skillcheck --target native -- to-prompt docs/skills/moonskill</pre>
+        <pre class="out">&lt;available_skills&gt;
+&lt;skill&gt;
+&lt;name&gt;
+moonskill
+&lt;/name&gt;
+&lt;description&gt;
+Read, validate and discover Agent Skills (SKILL.md directories) from MoonBit. Use when a MoonBit program must load skill documents, judge a SKILL.md against the Agent Skills specification, or put the skill names and descriptions in front of a model.
+&lt;/description&gt;
+&lt;location&gt;
+docs/skills/moonskill/SKILL.md
+&lt;/location&gt;
+&lt;/skill&gt;
+&lt;/available_skills&gt;</pre>
+      </div>
+
+    <p>Every subcommand takes directories, or a path to a <code>SKILL.md</code> and the directory that holds it. With no subcommand at all, the arguments are directories to check, which is the form a CI step in this repository uses.</p>
 
   </section>
 

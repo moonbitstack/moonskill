@@ -168,6 +168,39 @@ FAIL  docs/skills/broken
 `--json` prints one object per directory for a program to read. The command exits
 non-zero when anything failed, which is what a CI step wants.
 
+The same command answers the other two questions. `read-properties` prints the
+header as JSON — the six fields the specification defines, the optional ones only
+when the document has them:
+
+```
+moon run src/cmd/skillcheck --target native -- read-properties docs/skills/moonskill
+{"name":"moonskill","description":"Read, validate and discover Agent Skills (SKILL.md directories) from MoonBit. Use when a MoonBit program must load skill documents, judge a SKILL.md against the Agent Skills specification, or put the skill names and descriptions in front of a model."}
+```
+
+`to-prompt` prints the tier-1 block for the skills it is given, in the order it
+was given them, which is what a client puts in a system prompt:
+
+```
+moon run src/cmd/skillcheck --target native -- to-prompt docs/skills/moonskill
+<available_skills>
+<skill>
+<name>
+moonskill
+</name>
+<description>
+Read, validate and discover Agent Skills (SKILL.md directories) from MoonBit. Use when a MoonBit program must load skill documents, judge a SKILL.md against the Agent Skills specification, or put the skill names and descriptions in front of a model.
+</description>
+<location>
+docs/skills/moonskill/SKILL.md
+</location>
+</skill>
+</available_skills>
+```
+
+Each subcommand takes directories, or a path to a `SKILL.md` and the directory
+that holds it. `validate` is also the default, so an argument list with no
+subcommand at all is a list of directories to check.
+
 ## Interface
 
 | Item | Signature |

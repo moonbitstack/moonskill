@@ -2,36 +2,44 @@
 // SPDX-License-Identifier: Apache-2.0
 
 ///|
-/// Check the skill directories named on the command line.
+/// The three questions a shell asks about a skill directory.
 ///
-/// One line per directory on success, one line and the faults on failure, and a
-/// non-zero exit when anything failed — which is what a repository's CI step
-/// reads. `--json` prints one object per line instead, for a program that wants
-/// the fault kinds rather than the sentences.
+/// `validate` is the one a repository's CI step runs: one line per directory, a
+/// non-zero exit when anything failed. `read-properties` prints the header as
+/// JSON for a program that wants the fields rather than the verdict, and
+/// `to-prompt` prints the tier-1 block for a set of skills. Without a
+/// subcommand every argument is a directory to validate, which is the form the
+/// command had before the other two existed.
 async fn main {
   let args = @env.args()
-  let mut json = false
-  let targets = []
-  for index in 1..<args.length() {
-    let arg = args[index]
-    if arg == "--json" {
-      json = true
-    } else if arg == "--help" || arg == "-h" {
-      print_usage()
-      return
-    } else {
-      targets.push(arg)
-    }
+  let command = if args.length() > 1 { args[1] } else { "" }
+  if command == "read-properties" {
+    properties_command(args[2:])
+  } else if command == "to-prompt" {
+    prompt_command(args[2:])
+  } else if command == "validate" {
+    check_command(args[2:])
+  } else {
+    check_command(args[1:])
   }
-  if targets.length() == 0 {
+}
+
+///|
+/// Judge each directory, printing one line for each and the faults under the
+/// ones that failed.
+async fn check_command(targets : ArrayView[String]) -> Unit {
+  let (json, paths) = parse_flags(targets)
+  if paths.length() == 0 {
     print_usage()
     return
   }
   let mut failed = 0
-  for target in targets {
-    let (path, valid, faults) = check(target)
+  for target in paths {
+    let path = directory_of(target)
+    let faults = @fs.check(path)
+    let valid = faults.length() == 0
     if json {
-      print_json(path, valid, faults)
+      println(verdict_json(path, valid, faults).stringify())
     } else {
       print_human(path, valid, faults)
     }
@@ -40,15 +48,82 @@ async fn main {
     }
   }
   if failed > 0 {
-    fail("\{failed} of \{targets.length()} skill directories did not pass")
+    fail("\{failed} of \{paths.length()} skill directories did not pass")
   }
 }
 
 ///|
-async fn check(path : String) -> (String, Bool, Array[@moonskill.Fault]) {
-  let dir = if is_document(path) { parent_of(path) } else { path }
-  let faults = @fs.check(dir)
-  (dir, faults.length() == 0, faults)
+/// The header of each skill as JSON, one object per line.
+///
+/// A document that cannot be read at all is reported under the directory and
+/// makes the run fail; a document that reads but is missing a required field
+/// still prints, because what the header says is what was asked for.
+async fn properties_command(targets : ArrayView[String]) -> Unit {
+  if targets.length() == 0 {
+    print_usage()
+    return
+  }
+  let mut failed = 0
+  for target in targets {
+    let path = directory_of(target)
+    match (Ok(@fs.load(path)) catch { e => Err(e) }) {
+      Ok(skill) => println(properties_json(skill).stringify())
+      Err(error) => {
+        failed = failed + 1
+        println("FAIL  \{path}")
+        println("      - \{error.to_string()}")
+      }
+    }
+  }
+  if failed > 0 {
+    fail("\{failed} of \{targets.length()} skill directories could not be read")
+  }
+}
+
+///|
+/// The tier-1 block for the directories, in the order they were given.
+///
+/// Nothing is printed when a directory cannot be read: a block missing a skill
+/// is a block that tells a model a tool does not exist.
+async fn prompt_command(targets : ArrayView[String]) -> Unit {
+  if targets.length() == 0 {
+    print_usage()
+    return
+  }
+  let skills = []
+  let mut failed = 0
+  for target in targets {
+    let path = directory_of(target)
+    match (Ok(@fs.load(path)) catch { e => Err(e) }) {
+      Ok(skill) => skills.push(skill)
+      Err(error) => {
+        failed = failed + 1
+        println("FAIL  \{path}")
+        println("      - \{error.to_string()}")
+      }
+    }
+  }
+  if failed > 0 {
+    fail("\{failed} of \{targets.length()} skill directories could not be read")
+  }
+  println(@moonskill.prompt(skills))
+}
+
+///|
+/// The flags a check takes, and the paths among the arguments.
+fn parse_flags(args : ArrayView[String]) -> (Bool, Array[String]) {
+  let mut json = false
+  let paths = []
+  for arg in args {
+    if arg == "--json" {
+      json = true
+    } else if arg == "--help" || arg == "-h" {
+      print_usage()
+    } else {
+      paths.push(arg)
+    }
+  }
+  (json, paths)
 }
 
 ///|
@@ -68,11 +143,13 @@ fn print_human(
 }
 
 ///|
-fn print_json(
+/// One verdict as a program reads it: the path, whether it passed, and the
+/// faults with their tags and their sentences.
+fn verdict_json(
   path : String,
   valid : Bool,
   faults : Array[@moonskill.Fault],
-) -> Unit {
+) -> Json {
   let reported = []
   for fault in faults {
     reported.push(
@@ -81,23 +158,69 @@ fn print_json(
       ),
     )
   }
-  let line = Json::object(
+  Json::object(
     Map([
       ("path", Json(path)),
       ("valid", Json(valid)),
       ("faults", Json::array(reported)),
     ]),
   )
-  println(line.stringify())
+}
+
+///|
+/// The fields the specification defines, with the optional ones present only
+/// when the document has them.
+fn properties_json(skill : @moonskill.Skill) -> Json {
+  let fields : Map[String, Json] = Map([
+    ("name", Json(skill.name)),
+    ("description", Json(skill.description)),
+  ])
+  if skill.license() is Some(text) {
+    fields["license"] = Json(text)
+  }
+  if skill.compatibility() is Some(text) {
+    fields["compatibility"] = Json(text)
+  }
+  if skill.allowed_tools() is Some(text) {
+    fields["allowed-tools"] = Json(text)
+  }
+  if skill.metadata() is Some(entries) && entries.length() > 0 {
+    let text : Map[String, Json] = Map([])
+    for key, value in entries {
+      text[key] = Json(value)
+    }
+    fields["metadata"] = Json::object(text)
+  }
+  Json::object(fields)
 }
 
 ///|
 fn print_usage() -> Unit {
   println("usage: moonskill <skill-directory>... [--json]")
+  println("       moonskill validate <skill-directory>... [--json]")
+  println("       moonskill read-properties <skill-directory>...")
+  println("       moonskill to-prompt <skill-directory>...")
   println("")
-  println("  Checks each directory against the Agent Skills specification.")
-  println("  A path to a SKILL.md checks the directory that holds it.")
-  println("  --json  one JSON object per directory, for a program")
+  println("  validate         Judge each directory against the Agent Skills")
+  println(
+    "                   specification: one line each, a non-zero exit when",
+  )
+  println("                   anything failed. --json prints one object per")
+  println("                   directory for a program to read.")
+  println("  read-properties  Print the frontmatter of each skill as JSON.")
+  println("  to-prompt        Print the <available_skills> block they offer.")
+  println("")
+  println("  A path to a SKILL.md names the directory that holds it.")
+}
+
+///|
+/// The directory a skill is in, given either the directory or its document.
+fn directory_of(path : String) -> String {
+  if is_document(path) {
+    parent_of(path)
+  } else {
+    path
+  }
 }
 
 ///|
