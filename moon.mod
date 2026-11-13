@@ -30,7 +30,7 @@ description = "Agent Skills for MoonBit: discover skill directories, read SKILL.
 source = "src"
 
 import {
-  "moonbitstack/moonyaml@0.1.6",
+  "moonbitstack/moonyaml@0.1.7",
   "moonbitstack/moonucd@0.1.4",
   "moonbitlang/async@0.22.5",
 }
