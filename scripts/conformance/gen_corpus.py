@@ -19,6 +19,12 @@ ROOT = Path(__file__).resolve().parent / "skills"
 
 NO_DOCUMENT = None
 
+# A case whose document is named in lower case, which the specification allows a
+# reader to accept. Only one case needs it: the rest are `SKILL.md`, and a corpus
+# written on a system that folds case would otherwise never contain the other
+# spelling at all.
+LOWERCASE_DOCUMENT = {"lower-document"}
+
 # (directory name, document text or NO_DOCUMENT, what the case is about)
 CASES: list[tuple[str, str | None, str]] = [
     (
@@ -233,12 +239,14 @@ def main() -> int:
     check = "--check" in sys.argv[1:]
     ROOT.mkdir(parents=True, exist_ok=True)
     stale = []
-    for name, document, _note in CASES:
+    for name_case, document, _note in CASES:
+        name = name_case
         directory = ROOT / name
         if document is NO_DOCUMENT:
             wanted = {directory / "README.md": "# Not a skill\n"}
         else:
-            wanted = {directory / "SKILL.md": document}
+            name = "skill.md" if name_case in LOWERCASE_DOCUMENT else "SKILL.md"
+            wanted = {directory / name: document}
         for file, text in wanted.items():
             if check:
                 if not file.exists() or file.read_text(encoding="utf-8") != text:
