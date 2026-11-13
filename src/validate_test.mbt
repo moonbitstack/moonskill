@@ -274,3 +274,16 @@ test "the tag of a fault does not change with its wording" {
   assert_eq(@moonskill.NameEdgeHyphen.kind(), "name-edge-hyphen")
   assert_eq(@moonskill.Fault::MissingDocument.kind(), "missing-document")
 }
+
+///|
+/// Hyphens are allowed in any script: the rule is about the character, not about
+/// the alphabet it belongs to, and a name that is two words in Russian joins them
+/// the way a name in Latin does.
+test "a name in another script may carry hyphens" {
+  assert_eq(
+    faults_of(
+      "мой-навык", "---\nname: мой-навык\ndescription: A test skill\n---\nBody\n",
+    ),
+    [],
+  )
+}
