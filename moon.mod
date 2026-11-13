@@ -21,6 +21,9 @@ keywords = [
   "progressive-disclosure",
   "validation",
   "discovery",
+  "parser",
+  "prompt",
+  "cli",
   "agent",
   "moonbit",
 ]
