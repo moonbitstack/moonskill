@@ -8,6 +8,7 @@
 /// a tighter budget than the specification's — a model with a smaller context
 /// wants shorter descriptions — and because a test that reads the boundary
 /// should read it from one place.
+#derive(@debug.Debug)
 pub(all) struct Limits {
   /// The longest `name`, in characters. The specification says 64.
   name : Int32
@@ -16,6 +17,9 @@ pub(all) struct Limits {
   /// The longest `compatibility`, in characters. The specification says 500.
   compatibility : Int32
 }
+
+///|
+pub extend Limits with @debug.Debug::{to_repr}
 
 ///|
 /// The limits of the Agent Skills specification.

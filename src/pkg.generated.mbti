@@ -74,18 +74,22 @@ pub fn Fault::to_repr(Self) -> @debug.Repr
 pub fn Fault::to_string(Self) -> String
 pub impl Show for Fault
 
+#derive(@debug.Debug)
 pub(all) struct Limits {
   name : Int32
   description : Int32
   compatibility : Int32
 }
+pub fn Limits::to_repr(Self) -> @debug.Repr
 
+#derive(@debug.Debug)
 pub(all) struct Skill {
   name : String
   description : String
   body : String
   meta : Map[String, @json.Json]
   root : String
+  document : String
 }
 pub fn Skill::allowed_tools(Self) -> String?
 pub fn Skill::compatibility(Self) -> String?
@@ -94,6 +98,7 @@ pub fn Skill::location(Self) -> String
 pub fn Skill::metadata(Self) -> Map[String, String]?
 pub fn Skill::resolve(Self, StringView) -> String?
 pub fn Skill::summary(Self) -> String
+pub fn Skill::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 

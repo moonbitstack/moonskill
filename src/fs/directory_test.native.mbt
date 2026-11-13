@@ -143,3 +143,18 @@ async test "a skill that follows the specification has no faults, read from disk
   let path = @moonskill.join_path(tree.root, "my-skill")
   assert_eq(@fs.check(path), [])
 }
+
+///|
+/// A directory offered as a skill with nothing to read is the refusal the
+/// specification names, not an empty skill.
+async test "a directory with no document refuses to be loaded" {
+  let tree = Tree::new("no-document")
+  defer @async.protect_from_cancel(() => tree.close())
+  let path = tree.dir("nothing-here")
+  let named = match (Ok(@fs.load(path)) catch { e => Err(e) }) {
+    Ok(_) => "<loaded>"
+    Err(@moonskill.NoDocument) => "NoDocument"
+    Err(_) => "<some other error>"
+  }
+  assert_eq(named, "NoDocument")
+}

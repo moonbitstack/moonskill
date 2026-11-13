@@ -63,3 +63,23 @@ test "the base name is the last segment, with or without a trailing slash" {
   assert_eq(@moonskill.base_name("skills\\pdf-tools\\"), "pdf-tools")
   assert_eq(@moonskill.base_name("pdf-tools"), "pdf-tools")
 }
+
+///|
+/// `Debug` is what a test snapshot and a debugger print, so a skill is a value
+/// that has one, document included.
+test "a skill prints its fields, including the document it came from" {
+  let skill = @moonskill.parse(
+    "---\nname: pdf-tools\ndescription: Extract text.\n---\nBody\n",
+  )
+  let printed = skill.to_repr().to_string()
+  assert_true(printed.contains("pdf-tools"))
+  assert_true(printed.contains("SKILL.md"))
+}
+
+///|
+/// A limit set is a value a test reads the boundary from, so it prints too.
+test "a limit set prints its three numbers" {
+  let printed = @moonskill.limits.to_repr().to_string()
+  assert_true(printed.contains("64"))
+  assert_true(printed.contains("1024"))
+}

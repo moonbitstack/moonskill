@@ -133,3 +133,36 @@ async test "discovery over an empty source is empty" {
   let source = memory([])
   assert_eq(@moonskill.discover(source).length(), 0)
 }
+
+///|
+/// The document a skill was read from is part of the skill, because the path a
+/// client hands a model has to name a file that is there. A source keyed by path
+/// is where the two names stay apart: on a filesystem that folds case they are
+/// one file and no reader can tell them apart.
+async test "a skill remembers the document it was read under" {
+  let lower = memory([
+    (
+      "skills/lower/skill.md", "---\nname: lower\ndescription: Written on a folding system.\n---\nBody\n",
+    ),
+  ])
+  let skill = @moonskill.load(lower, root="skills/lower")
+  assert_eq(skill.document, "skill.md")
+  assert_eq(skill.location(), "skills/lower/skill.md")
+}
+
+///|
+/// Both names in one directory is one skill read from the capital one, which is
+/// the order the specification prefers.
+async test "the capital name wins when a source offers both" {
+  let both = memory([
+    (
+      "skills/both/SKILL.md", "---\nname: both\ndescription: The capital one.\n---\nBody\n",
+    ),
+    (
+      "skills/both/skill.md", "---\nname: both\ndescription: The lower one.\n---\nBody\n",
+    ),
+  ])
+  let skill = @moonskill.load(both, root="skills/both")
+  assert_eq(skill.description, "The capital one.")
+  assert_eq(skill.document, "SKILL.md")
+}

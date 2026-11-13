@@ -179,7 +179,7 @@ non-zero when anything failed, which is what a CI step wants.
 | `load` | `async load(source : &Source, root~ : String) -> Skill raise` |
 | `prompt` | `prompt(skills : ArrayView[Skill]) -> String` |
 | `Source` | `async list(Self) -> Array[String] raise`, `async read(Self, path : String) -> Bytes raise` |
-| `Skill` | `name`, `description`, `body`, `meta : Map[String, Json]`, `root` |
+| `Skill` | `name`, `description`, `body`, `meta : Map[String, Json]`, `root`, `document` |
 | `Skill::summary` | `Skill::summary(Skill) -> String` |
 | `Skill::location` | `Skill::location(Skill) -> String` |
 | `Skill::resolve` | `Skill::resolve(Skill, StringView) -> String?` |

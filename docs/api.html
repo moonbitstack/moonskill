@@ -38,7 +38,7 @@
   <div class="docline">
     <span class="ref">moonbitstack</span>
     <span>appendix</span>
-    <span>44 public items</span>
+    <span>46 public items</span>
     <span class="right">
       <span>ap&ndash;04</span>
       <a href="https://github.com/moonbitstack/moonskill">github</a>
@@ -260,6 +260,15 @@
 <div class="api-doc"><p>The length limits the specification puts on a frontmatter field.</p><p>They are a record rather than three constants because a client may enforce a tighter budget than the specification&#x27;s — a model with a smaller context wants shorter descriptions — and because a test that reads the boundary should read it from one place.</p></div>
 <table class="api-members"><thead><tr><th scope="col">Field</th><th scope="col">Type</th><th scope="col">Meaning</th></tr></thead><tbody><tr><td><code>name</code></td><td>Int32</td><td>The longest <code>name</code>, in characters. The specification says 64.</td></tr><tr><td><code>description</code></td><td>Int32</td><td>The longest <code>description</code>, in characters. The specification says 1024.</td></tr><tr><td><code>compatibility</code></td><td>Int32</td><td>The longest <code>compatibility</code>, in characters. The specification says 500.</td></tr></tbody></table>
 </div>
+<div class="api-list api-methods">
+<div class="api-item" id="limits-to-repr">
+<div class="api-head">
+<code class="api-name">Limits::to_repr</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Limits::to_repr(Self) -&gt; @debug.Repr</pre>
+</div>
+</div>
 <div class="api-type" id="skill">
 <div class="api-head">
 <code class="api-name">Skill</code>
@@ -267,7 +276,7 @@
 </div>
 <pre class="api-sig">pub(all) struct Skill</pre>
 <div class="api-doc"><p>A skill document: the frontmatter the specification defines, the Markdown an agent reads when the skill is activated, and the directory it came from.</p><p>The specification loads a skill in three tiers, and the fields follow them: <code>Skill::summary</code> is the tier a client reads for every skill it knows about, <code>body</code> is the tier it reads once the skill is chosen, and the files the body points at are read one at a time through <code>Skill::resolve</code> when the task reaches them.</p></div>
-<table class="api-members"><thead><tr><th scope="col">Field</th><th scope="col">Type</th><th scope="col">Meaning</th></tr></thead><tbody><tr><td><code>name</code></td><td>String</td><td>The <code>name</code> field, trimmed. Empty when the frontmatter has none, or when it is not text.</td></tr><tr><td><code>description</code></td><td>String</td><td>The <code>description</code> field, trimmed. Empty when the frontmatter has none.</td></tr><tr><td><code>body</code></td><td>String</td><td>The Markdown after the frontmatter, trimmed at both ends.</td></tr><tr><td><code>meta</code></td><td>Map[String, @json.Json]</td><td>The whole frontmatter, so a client reads fields this library does not name — <code>license</code>, <code>metadata</code>, <code>allowed-tools</code> — and so <code>validate</code> can judge the text as written rather than as trimmed.</td></tr><tr><td><code>root</code></td><td>String</td><td>The skill directory as given to <code>parse</code>, or as returned by a <code>Source</code>. Empty means there is no directory to check the name against.</td></tr></tbody></table>
+<table class="api-members"><thead><tr><th scope="col">Field</th><th scope="col">Type</th><th scope="col">Meaning</th></tr></thead><tbody><tr><td><code>name</code></td><td>String</td><td>The <code>name</code> field, trimmed. Empty when the frontmatter has none, or when it is not text.</td></tr><tr><td><code>description</code></td><td>String</td><td>The <code>description</code> field, trimmed. Empty when the frontmatter has none.</td></tr><tr><td><code>body</code></td><td>String</td><td>The Markdown after the frontmatter, trimmed at both ends.</td></tr><tr><td><code>meta</code></td><td>Map[String, @json.Json]</td><td>The whole frontmatter, so a client reads fields this library does not name — <code>license</code>, <code>metadata</code>, <code>allowed-tools</code> — and so <code>validate</code> can judge the text as written rather than as trimmed.</td></tr><tr><td><code>root</code></td><td>String</td><td>The skill directory as given to <code>parse</code>, or as returned by a <code>Source</code>. Empty means there is no directory to check the name against.</td></tr><tr><td><code>document</code></td><td>String</td><td>The name of the document inside <code>root</code>: <code>SKILL.md</code>, or <code>skill.md</code> for a directory written on a system that folds case. <code>Skill::location</code> hands this back to a model, so it names the file that is actually there rather than the one the specification prefers.</td></tr></tbody></table>
 </div>
 <div class="api-list api-methods">
 <div class="api-item" id="skill-allowed-tools">
@@ -325,6 +334,13 @@
 </div>
 <pre class="api-sig">fn Skill::summary(Self) -&gt; String</pre>
 <div class="api-doc"><p>The metadata tier: what a client puts in front of a model before the model has chosen anything, which the specification budgets at about a hundred tokens per skill. One line, so a list of them stays a list.</p></div>
+</div>
+<div class="api-item" id="skill-to-repr">
+<div class="api-head">
+<code class="api-name">Skill::to_repr</code>
+<span class="api-kind">function</span>
+</div>
+<pre class="api-sig">fn Skill::to_repr(Self) -&gt; @debug.Repr</pre>
 </div>
 </div>
 <h3 class="api-group">Traits</h3>

@@ -43,12 +43,15 @@ pub async fn discover(source : &Source) -> Array[Skill] {
 ///
 /// The document is `SKILL.md`, or `skill.md` for a directory written on a
 /// system that folds case, which the specification allows readers to accept.
+/// Whichever was found is remembered in [`Skill::document`]: a client opens the
+/// path [`Skill::location`] gives it, and on a system that keeps the two names
+/// apart only one of them is a file.
 pub async fn load(source : &Source, root~ : String) -> Skill {
-  let bytes = match try_read(source, join_path(root, "SKILL.md")) {
-    Some(bytes) => bytes
+  let (document, bytes) = match try_read(source, join_path(root, "SKILL.md")) {
+    Some(bytes) => ("SKILL.md", bytes)
     None =>
       match try_read(source, join_path(root, "skill.md")) {
-        Some(bytes) => bytes
+        Some(bytes) => ("skill.md", bytes)
         None => raise Refused::NoDocument
       }
   }
@@ -56,7 +59,8 @@ pub async fn load(source : &Source, root~ : String) -> Skill {
     @utf8.Malformed(rest) =>
       raise Refused::NotUtf8(bytes.length() - rest.length())
   }
-  parse(text, root~)
+  let skill = parse(text, root~)
+  { ..skill, document, }
 }
 
 ///|

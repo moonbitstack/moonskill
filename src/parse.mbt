@@ -41,6 +41,7 @@ pub fn parse(text : StringView, root? : String) -> Skill raise Refused {
     body,
     meta: fields,
     root,
+    document: "SKILL.md",
   }
 }
 

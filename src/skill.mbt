@@ -10,6 +10,7 @@
 /// about, `body` is the tier it reads once the skill is chosen, and the files
 /// the body points at are read one at a time through [`Skill::resolve`] when the
 /// task reaches them.
+#derive(@debug.Debug)
 pub(all) struct Skill {
   /// The `name` field, trimmed. Empty when the frontmatter has none, or when
   /// it is not text.
@@ -25,7 +26,15 @@ pub(all) struct Skill {
   /// The skill directory as given to [`parse`], or as returned by a
   /// [`Source`]. Empty means there is no directory to check the name against.
   root : String
+  /// The name of the document inside `root`: `SKILL.md`, or `skill.md` for a
+  /// directory written on a system that folds case. [`Skill::location`] hands
+  /// this back to a model, so it names the file that is actually there rather
+  /// than the one the specification prefers.
+  document : String
 }
+
+///|
+pub extend Skill with @debug.Debug::{to_repr}
 
 ///|
 /// The metadata tier: what a client puts in front of a model before the model
@@ -46,9 +55,9 @@ pub fn Skill::summary(self : Skill) -> String {
 /// it can open the skill if it wants the body.
 pub fn Skill::location(self : Skill) -> String {
   if self.root == "" {
-    "SKILL.md"
+    self.document
   } else {
-    join_path(self.root, "SKILL.md")
+    join_path(self.root, self.document)
   }
 }
 
